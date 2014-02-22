@@ -57,6 +57,20 @@
             ReferencedContainer = "container:Assignment 2: Photo Tour.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "[0 0 0 0] "
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/img_000.jpg&quot;"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/*.jpg&quot;"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

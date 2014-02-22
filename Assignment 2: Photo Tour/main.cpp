@@ -7,26 +7,14 @@
 //
 
 #include <iostream>
-#include <opencv2/opencv.hpp>
+#include "FileUtil.h"
 
-using namespace cv;
+using namespace std;
 
 int main(int argc, const char * argv[])
 {
-    
-    int h = 10;
-    int l = 20;
-    int t = 40;
-    
-    // Window & trackbars
-    namedWindow("blended", CV_WINDOW_AUTOSIZE);
-    createTrackbar("Canny High", "blended", &h, 199);
-    createTrackbar("Canny Low", "blended", &l, 199);
-    createTrackbar("Detection Threshold", "blended", &t, 99);
-
-    waitKey();
-    // insert code here...
-    std::cout << "Photo allignment!!\n";
+    FileUtil fu;
+    fu.checkArgs(argc, argv);
     return 0;
 }
 
