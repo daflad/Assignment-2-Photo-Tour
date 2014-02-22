@@ -31,7 +31,7 @@ public:
     void getROI(string sourceImage);
     
     void getROI(string sourceImage, int coords[4]);
-    
+
     void mouseActions(int x, int y);
     
 };

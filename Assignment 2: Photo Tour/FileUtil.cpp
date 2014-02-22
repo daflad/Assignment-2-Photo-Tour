@@ -9,6 +9,7 @@
 #include "FileUtil.h"
 #include <dirent.h>
 #include "ROI.h"
+#include <vector>
 
 void FileUtil::init() {
     
@@ -39,7 +40,6 @@ bool FileUtil::checkArgs(int argc, const char * argv[]) {
     return true;
 };
 //----------------------------------------------------------------------------------------------
-
 
 bool FileUtil::checkfd(int argc, const char **argv) {
     if (argc != 4) {
@@ -76,6 +76,7 @@ bool FileUtil::checkfd(int argc, const char **argv) {
     
     return true;
 }
+//----------------------------------------------------------------------------------------------
 
 bool FileUtil::checkrfd(int argc, const char **argv) {
     
@@ -109,12 +110,8 @@ bool FileUtil::checkrfd(int argc, const char **argv) {
     
     ROI roi;
     roi.init();
-    int x1 = atoi(argv[3]);
-    int y1 = atoi(argv[4]);
-    int x2 = atoi(argv[5]);
-    int y2 = atoi(argv[6]);
     
-    int cord[4] = { x1, y1, x2, y2 };
+    int cord[4] = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]) };
     roi.getROI(fp, cord);
     
     return true;
