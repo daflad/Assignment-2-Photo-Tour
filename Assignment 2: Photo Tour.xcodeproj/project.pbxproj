@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7706420918B89D4100125FC0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7706420818B89D4100125FC0 /* main.cpp */; };
-		7706420B18B89D4100125FC0 /* Assignment_2__Photo_Tour.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7706420A18B89D4100125FC0 /* Assignment_2__Photo_Tour.1 */; };
+		7706421318B8A04400125FC0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7706421218B8A04400125FC0 /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -18,7 +17,6 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				7706420B18B89D4100125FC0 /* Assignment_2__Photo_Tour.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -26,8 +24,8 @@
 
 /* Begin PBXFileReference section */
 		7706420518B89D4100125FC0 /* Assignment 2: Photo Tour */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Assignment 2: Photo Tour"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7706420818B89D4100125FC0 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		7706420A18B89D4100125FC0 /* Assignment_2__Photo_Tour.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Assignment_2__Photo_Tour.1; sourceTree = "<group>"; };
+		7706421118B8A04400125FC0 /* Assignment_2__Photo_Tour.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = Assignment_2__Photo_Tour.1; sourceTree = "<group>"; };
+		7706421218B8A04400125FC0 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,8 +58,8 @@
 		7706420718B89D4100125FC0 /* Assignment 2: Photo Tour */ = {
 			isa = PBXGroup;
 			children = (
-				7706420818B89D4100125FC0 /* main.cpp */,
-				7706420A18B89D4100125FC0 /* Assignment_2__Photo_Tour.1 */,
+				7706421118B8A04400125FC0 /* Assignment_2__Photo_Tour.1 */,
+				7706421218B8A04400125FC0 /* main.cpp */,
 			);
 			path = "Assignment 2: Photo Tour";
 			sourceTree = "<group>";
@@ -117,7 +115,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7706420918B89D4100125FC0 /* main.cpp in Sources */,
+				7706421318B8A04400125FC0 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +223,7 @@
 				7706421018B89D4100125FC0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
