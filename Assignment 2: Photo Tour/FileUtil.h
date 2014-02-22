@@ -34,6 +34,8 @@ public:
     
 private:
 
+    bool checkfd(int argc, const char * argv[]);
+    bool checkrfd(int argc, const char * argv[]);
 
 };
 
