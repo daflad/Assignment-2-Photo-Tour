@@ -32,6 +32,8 @@ public:
     
     void getROI(string sourceImage, int coords[4]);
     
+    void mouseActions(int x, int y);
+    
 };
 
 #endif /* defined(__Assignment_2__Photo_Tour__ROI__) */

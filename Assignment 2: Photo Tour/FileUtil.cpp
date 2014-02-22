@@ -70,6 +70,10 @@ bool FileUtil::checkfd(int argc, const char **argv) {
         return false;
     }
     
+    ROI roi;
+    roi.init();
+    roi.getROI(fp);
+    
     return true;
 }
 
@@ -105,7 +109,13 @@ bool FileUtil::checkrfd(int argc, const char **argv) {
     
     ROI roi;
     roi.init();
-    roi.getROI(fp);
+    int x1 = atoi(argv[3]);
+    int y1 = atoi(argv[4]);
+    int x2 = atoi(argv[5]);
+    int y2 = atoi(argv[6]);
+    
+    int cord[4] = { x1, y1, x2, y2 };
+    roi.getROI(fp, cord);
     
     return true;
 }
