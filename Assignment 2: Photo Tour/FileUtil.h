@@ -13,8 +13,9 @@
 #define __Assignment_2__Photo_Tour__FileUtil__
 
 #include <iostream>
-#include "Image.h"
 #include <vector>
+#include "Image.h"
+#include "ROI.h"
 
 using namespace std;
 
@@ -23,6 +24,8 @@ class FileUtil {
 public:
 
     vector<string> filepaths;
+    
+    ROI roi;
     
     // Setup class vars
     void init();

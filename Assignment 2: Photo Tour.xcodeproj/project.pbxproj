@@ -30,6 +30,7 @@
 		7706423E18B8A96F00125FC0 /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7706423C18B8A96F00125FC0 /* Image.cpp */; };
 		7706424118B8C62D00125FC0 /* ROI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7706423F18B8C62D00125FC0 /* ROI.cpp */; };
 		7706424518B8D8CF00125FC0 /* ThumbPreview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7706424318B8D8CF00125FC0 /* ThumbPreview.cpp */; };
+		7706424818B90BC600125FC0 /* ImageAllignment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7706424618B90BC500125FC0 /* ImageAllignment.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -74,6 +75,8 @@
 		7706424018B8C62D00125FC0 /* ROI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ROI.h; sourceTree = "<group>"; };
 		7706424318B8D8CF00125FC0 /* ThumbPreview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThumbPreview.cpp; sourceTree = "<group>"; };
 		7706424418B8D8CF00125FC0 /* ThumbPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThumbPreview.h; sourceTree = "<group>"; };
+		7706424618B90BC500125FC0 /* ImageAllignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageAllignment.cpp; sourceTree = "<group>"; };
+		7706424718B90BC600125FC0 /* ImageAllignment.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ImageAllignment.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +138,8 @@
 				7706424018B8C62D00125FC0 /* ROI.h */,
 				7706424318B8D8CF00125FC0 /* ThumbPreview.cpp */,
 				7706424418B8D8CF00125FC0 /* ThumbPreview.h */,
+				7706424618B90BC500125FC0 /* ImageAllignment.cpp */,
+				7706424718B90BC600125FC0 /* ImageAllignment.hpp */,
 			);
 			path = "Assignment 2: Photo Tour";
 			sourceTree = "<group>";
@@ -217,6 +222,7 @@
 			files = (
 				7706423E18B8A96F00125FC0 /* Image.cpp in Sources */,
 				7706421318B8A04400125FC0 /* main.cpp in Sources */,
+				7706424818B90BC600125FC0 /* ImageAllignment.cpp in Sources */,
 				7706424518B8D8CF00125FC0 /* ThumbPreview.cpp in Sources */,
 				7706424118B8C62D00125FC0 /* ROI.cpp in Sources */,
 				7706423B18B8A84F00125FC0 /* FileUtil.cpp in Sources */,

@@ -8,10 +8,9 @@
 
 #include "FileUtil.h"
 #include <dirent.h>
-#include "ROI.h"
 
 void FileUtil::init() {
-    
+    roi.init();
 }
 
 // Check arguments passed at runtime
@@ -49,8 +48,7 @@ bool FileUtil::checkfd(int argc, const char **argv) {
     
     getFilePaths(argv);
     
-    ROI roi;
-    roi.init();
+    
     roi.getROI(argv[8]);
     
     return true;
@@ -66,9 +64,6 @@ bool FileUtil::checkrfd(int argc, const char **argv) {
     }
 
     getFilePaths(argv);
-    
-    ROI roi;
-    roi.init();
     
     int cord[4] = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]) };
     roi.getROI(argv[8], cord);

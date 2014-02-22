@@ -9,18 +9,27 @@
 #include <iostream>
 #include "FileUtil.h"
 #include "ThumbPreview.h"
+#include "ImageAllignment.hpp"
 
 using namespace std;
 
 int main(int argc, const char * argv[])
 {
     FileUtil fu;
+    fu.init();
     ThumbPreview tp;
     
+    string dp = argv[9];
+    
     if (fu.checkArgs(argc, argv)) {
-        tp.init(&fu.filepaths, argv[9]);
-        tp.displayThumbnails();
+       // tp.init(&fu.filepaths, dp);
+      //  tp.displayThumbnails();
     }
+    
+    ImageAllignment ia;
+    ia.init(&fu.filepaths, &fu.roi.image, dp);
+    ia.detectFeaturePoints();
+    ia.extractDescriptors();
     return 0;
 }
 

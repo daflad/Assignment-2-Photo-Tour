@@ -29,7 +29,7 @@ public:
     
     string          dir_path;
     
-    vector<string>* filepaths;
+    vector<Mat> thumbs;
     
     void init(vector<string>* fp, string);
     
