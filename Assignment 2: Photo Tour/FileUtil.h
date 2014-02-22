@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include "Image.h"
+#include <vector>
 
 using namespace std;
 
@@ -21,6 +22,8 @@ class FileUtil {
 
 public:
 
+    vector<string> filepaths;
+    
     // Setup class vars
     void init();
     
@@ -36,6 +39,7 @@ private:
 
     bool checkfd(int argc, const char * argv[]);
     bool checkrfd(int argc, const char * argv[]);
+    void getFilePaths(const char * argv[]);
 
 };
 

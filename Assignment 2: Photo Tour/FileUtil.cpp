@@ -9,7 +9,6 @@
 #include "FileUtil.h"
 #include <dirent.h>
 #include "ROI.h"
-#include <vector>
 
 void FileUtil::init() {
     
@@ -48,31 +47,11 @@ bool FileUtil::checkfd(int argc, const char **argv) {
         return false;
     }
     
-    string fp = argv[2];
-    string dp = argv[3];
-    
-    DIR *dir;
-    struct dirent *ent;
-    if ((dir = opendir (dp.c_str())) != NULL) {
-        // list all jpg in a directory
-        while ((ent = readdir (dir)) != NULL) {
-            string name = ent->d_name;
-            string ft = ".jpg";
-            if (name.find(ft) != string::npos) {
-                
-                printf ("%s\n", ent->d_name);
-            }
-        }
-        closedir (dir);
-    } else {
-        // could not open directory
-        perror ("ERROR");
-        return false;
-    }
+    getFilePaths(argv);
     
     ROI roi;
     roi.init();
-    roi.getROI(fp);
+    roi.getROI(argv[8]);
     
     return true;
 }
@@ -85,38 +64,43 @@ bool FileUtil::checkrfd(int argc, const char **argv) {
         cerr << "USAGE :: " << "Photo Tour -rfd [ x1 y1 x2 y2 ]  \"fileName.jpg\" ./" << endl;
         return false;
     }
+
+    getFilePaths(argv);
     
-    string fp = argv[8];
+    ROI roi;
+    roi.init();
+    
+    int cord[4] = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]) };
+    roi.getROI(argv[8], cord);
+    
+    return true;
+}
+//----------------------------------------------------------------------------------------------
+
+void FileUtil::getFilePaths(const char * argv[]) {
     string dp = argv[9];
     
     DIR *dir;
     struct dirent *ent;
     if ((dir = opendir (dp.c_str())) != NULL) {
         // list all jpg in a directory
+        int c = 0;
         while ((ent = readdir (dir)) != NULL) {
             string name = ent->d_name;
             string ft = ".jpg";
             if (name.find(ft) != string::npos) {
-                
-                printf ("%s\n", ent->d_name);
+                filepaths.push_back(ent->d_name);
+                c++;
             }
         }
+        printf ("%d jpg added to list\n", c);
         closedir (dir);
     } else {
         // could not open directory
         perror ("ERROR");
-        return false;
     }
     
-    ROI roi;
-    roi.init();
-    
-    int cord[4] = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]) };
-    roi.getROI(fp, cord);
-    
-    return true;
 }
-
 
 
 

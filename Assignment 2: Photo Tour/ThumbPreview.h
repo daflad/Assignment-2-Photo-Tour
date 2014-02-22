@@ -11,15 +11,33 @@
 
 #include <iostream>
 #include <vector>
+#include <opencv2/opencv.hpp>
 
 using namespace std;
+using namespace cv;
 
 class ThumbPreview {
     
 public:
     
-    vector<string> filepaths;
+    int             number_in_row;
+    int             number_in_column;
+    int             firstIndex;
+    int             spacing;
+    int             width;
+    int             height;
     
+    string          dir_path;
+    
+    vector<string>* filepaths;
+    
+    void init(vector<string>* fp, string);
+    
+    void displayThumbnails();
+    
+    void setImage(int, Mat*);
+    void getSelection(int);
+    void setSelection(int);
     
 };
 

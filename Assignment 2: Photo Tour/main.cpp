@@ -8,13 +8,19 @@
 
 #include <iostream>
 #include "FileUtil.h"
+#include "ThumbPreview.h"
 
 using namespace std;
 
 int main(int argc, const char * argv[])
 {
     FileUtil fu;
-    fu.checkArgs(argc, argv);
+    ThumbPreview tp;
+    
+    if (fu.checkArgs(argc, argv)) {
+        tp.init(&fu.filepaths, argv[9]);
+        tp.displayThumbnails();
+    }
     return 0;
 }
 
