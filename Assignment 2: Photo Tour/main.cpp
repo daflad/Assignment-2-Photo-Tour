@@ -7,9 +7,6 @@
 //
 
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <fstream>
 #include "FileUtil.h"
 #include "ThumbPreview.h"
 #include "ImageAllignment.hpp"
@@ -18,8 +15,8 @@
 
 using namespace std;
 
-int main(int argc, const char * argv[])
-{
+int main(int argc, const char * argv[]) {
+    
     FileUtil fu;
     fu.init();
     ThumbPreview tp;
@@ -28,13 +25,18 @@ int main(int argc, const char * argv[])
     
     if (fu.checkArgs(argc, argv)) {
         tp.init(&fu.filepaths, dp);
-        tp.displayThumbnails();
     }
     
     ImageAllignment ia;
     ia.init(&fu.filepaths, &fu.roi.image, dp);
-    ia.detectFeaturePoints();
-    ia.extractDescriptors();
+    
+    
+//    for (int i = 0; i < ia.images.size(); i++) {
+    for (int i = 0; i < 2; i++) {
+        ia.detectFeaturePoints(i);
+        ia.extractDescriptors(i);
+    }
+
     
     return 0;
 }

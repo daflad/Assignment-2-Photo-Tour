@@ -19,33 +19,35 @@ void ImageAllignment::init(vector<string>* fp, Mat *m, string dp) {
     }
 }
 
-void ImageAllignment::detectFeaturePoints() {
+void ImageAllignment::detectFeaturePoints(int ind) {
         
-    Ptr<FeatureDetector> fd = FeatureDetector::create("SURF");
+    Ptr<FeatureDetector> fd = FeatureDetector::create("GFTT");
     
     fd->detect(roi, roikp);
     
     drawKeypoints(roi, roikp, roi, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
     
-    fd->detect(images[1], imgkp);
+    fd->detect(images[ind], imgkp);
     
-    drawKeypoints(images[1], imgkp, images[1], Scalar::all(-1), DrawMatchesFlags::DEFAULT);
+    drawKeypoints(images[ind], imgkp, images[ind], Scalar::all(-1), DrawMatchesFlags::DEFAULT);
     
     imshow("ROI", roi);
     namedWindow("NewFeats");
-    imshow("NewFeats", images[1]);
-    waitKey();
+    imshow("NewFeats", images[ind]);
+//    waitKey();
 }
 
-void ImageAllignment::extractDescriptors() {
+void ImageAllignment::extractDescriptors(int ind) {
     Ptr<DescriptorExtractor> de = DescriptorExtractor::create("SURF");
+   // de->set("hessianThreshold", 1400);
     Mat descriptors1, descriptors2;
     de->compute(roi, roikp, descriptors1);
-    de->compute(images[1], imgkp, descriptors2);
+    de->compute(images[ind], imgkp, descriptors2);
     
     FlannBasedMatcher matcher;
     vector< DMatch > matches;
     matcher.match( descriptors1, descriptors2, matches );
+    printf("%d matches found\n", (int)matches.size());
     
     double max_dist = 0; double min_dist = 100;
     
@@ -63,14 +65,25 @@ void ImageAllignment::extractDescriptors() {
     printf("-- Max dist : %f \n", max_dist );
     printf("-- Min dist : %f \n", min_dist );
     
-    Mat img_matches;
-    drawMatches( roi, roikp, images[1], imgkp, matches, img_matches, Scalar::all(-1), Scalar::all(-1),
-                vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
+    std::vector< DMatch > good_matches;
     
+    for( int i = 0; i < descriptors1.rows; i++ ) {
+        if( matches[i].distance < 1.5*min_dist) {
+            good_matches.push_back( matches[i]);
+        }
+    }
+    printf("%d matches found\n", (int)good_matches.size());
+    
+    Mat img_matches;
+    drawMatches( roi, roikp, images[ind], imgkp, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
+                vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
+
     //-- Show detected matches
     imshow( "Good Matches", img_matches );
     
     waitKey(0);
+
+
 }
 
 

@@ -29,16 +29,22 @@ public:
     
     string          dir_path;
     
-    vector<Mat> thumbs;
+    vector<Mat>     thumbs;
+    vector<Point>   coords;
+    vector<int>     scratched;
     
     void init(vector<string>* fp, string);
     
-    void displayThumbnails();
+    void displayThumbnails(Mat& thumb);
+    Mat& arrangeThumbnails(Mat& thumb);
+    int  hitOrMiss(int, int);
+    void scratchThumbnail();
     
     void setImage(int, Mat*);
     void getSelection(int);
     void setSelection(int);
     
 };
+
 
 #endif /* defined(__Assignment_2__Photo_Tour__ThumbPreview__) */
