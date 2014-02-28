@@ -21,7 +21,7 @@ void MouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
             Mat c = Mat(Size(tp->width,tp->height), tp->thumbs[0].type());
             tp->scratched.clear();
             tp->displayThumbnails(tp->arrangeThumbnails(c));
-            
+             
         }
     }
 }
@@ -35,6 +35,7 @@ void ThumbPreview::init(vector<string>* fp, string dp) {
     dir_path        = dp;
     
     namedWindow("Thumbnail");
+    setMouseCallback("Thumbnail", MouseCallBackFunc, this);
     
     for (int i = 0; i < fp->size(); i++) {
         Mat t;
@@ -97,7 +98,6 @@ int ThumbPreview::hitOrMiss(int x, int y) {
 
 void ThumbPreview::displayThumbnails(Mat& combined) {
 
-    setMouseCallback("Thumbnail", MouseCallBackFunc, this);
     imshow("Thumbnail", combined);
     waitKey();
 }

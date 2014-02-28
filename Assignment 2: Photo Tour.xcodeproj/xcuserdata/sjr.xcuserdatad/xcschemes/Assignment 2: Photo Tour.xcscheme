@@ -60,15 +60,15 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-rfd"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-fd"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "[ 295 134 346 202 ] "
+            argument = "-fd"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "[ 295 134 346 202 ] "
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/img_000.jpg&quot;"

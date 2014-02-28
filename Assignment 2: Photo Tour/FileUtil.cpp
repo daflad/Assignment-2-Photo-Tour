@@ -26,7 +26,6 @@ bool FileUtil::checkArgs(int argc, const char * argv[]) {
         return false;
     }
     
-    
     if (arg == "-fd") {
          return checkfd(argc, argv);
     }

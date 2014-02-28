@@ -39,7 +39,11 @@ void ImageAllignment::detectFeaturePoints(int ind) {
 
 void ImageAllignment::extractDescriptors(int ind) {
     Ptr<DescriptorExtractor> de = DescriptorExtractor::create("SURF");
-   // de->set("hessianThreshold", 1400);
+    de->set("hessianThreshold", 300);
+    de->set("upright", true);
+//    de->set("contrastThreshold", 3);
+//    de->set("edgeThreshold", 300);
+//    de->set("sigma", 1);
     Mat descriptors1, descriptors2;
     de->compute(roi, roikp, descriptors1);
     de->compute(images[ind], imgkp, descriptors2);
@@ -62,17 +66,20 @@ void ImageAllignment::extractDescriptors(int ind) {
         }
     }
     
+    float diff = max_dist - min_dist;
+    diff /= 4;
+    
     printf("-- Max dist : %f \n", max_dist );
     printf("-- Min dist : %f \n", min_dist );
     
     std::vector< DMatch > good_matches;
     
     for( int i = 0; i < descriptors1.rows; i++ ) {
-        if( matches[i].distance < 1.5*min_dist) {
+        if( matches[i].distance < min_dist*2) {
             good_matches.push_back( matches[i]);
         }
     }
-    printf("%d matches found\n", (int)good_matches.size());
+    printf("%d matches good found\n", (int)good_matches.size());
     
     Mat img_matches;
     drawMatches( roi, roikp, images[ind], imgkp, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),

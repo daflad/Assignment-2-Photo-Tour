@@ -31,10 +31,11 @@ int main(int argc, const char * argv[]) {
     ia.init(&fu.filepaths, &fu.roi.image, dp);
     
     
-//    for (int i = 0; i < ia.images.size(); i++) {
-    for (int i = 0; i < 2; i++) {
-        ia.detectFeaturePoints(i);
-        ia.extractDescriptors(i);
+    for (int i = 0; i < ia.images.size(); i++) {
+        for (int i = 0; i < 2; i++) {
+            ia.detectFeaturePoints(i);
+            ia.extractDescriptors(i);
+        } 
     }
 
     
