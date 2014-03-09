@@ -7,15 +7,28 @@
 //
 
 #include "FileUtil.h"
-#include <dirent.h>
+
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
+// Check arguments passed at runtime
+//
+// check useage and report problems
+//
+//----------------------------------------------------------------------------------------------
 
 void FileUtil::init() {
     roi.init();
 }
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
 // Check arguments passed at runtime
 //
 // check useage and report problems
+//
+//----------------------------------------------------------------------------------------------
 bool FileUtil::checkArgs(int argc, const char * argv[]) {
     
     string arg = argv[1];
@@ -36,6 +49,8 @@ bool FileUtil::checkArgs(int argc, const char * argv[]) {
     
     return false;
 };
+
+//----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
 //
 // checkfd  -- User does not know the ROI in advance
@@ -48,6 +63,7 @@ bool FileUtil::checkArgs(int argc, const char * argv[]) {
 // TODO::
 //       What if the ROI doe not complete propperly??
 //
+//----------------------------------------------------------------------------------------------
 bool FileUtil::checkfd(int argc, const char **argv) {
    
     if (argc != 4) {
@@ -63,6 +79,8 @@ bool FileUtil::checkfd(int argc, const char **argv) {
     
     return false;
 }
+
+//----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
 //
 // checkrfd  -- User selects ROI in advance
@@ -74,6 +92,8 @@ bool FileUtil::checkfd(int argc, const char **argv) {
 //
 // TODO::
 //       What if the ROI doe not complete propperly??
+//
+//----------------------------------------------------------------------------------------------
 bool FileUtil::checkrfd(int argc, const char **argv) {
     
     if (argc != 10) {
@@ -90,12 +110,15 @@ bool FileUtil::checkrfd(int argc, const char **argv) {
     
     return false;
 }
+
 //----------------------------------------------------------------------------------------------
 //
 // getFilePaths
 //
 // Load all file paths into the designated vector for retieval later.
 // Present any problems to the user.
+//
+//----------------------------------------------------------------------------------------------
 bool FileUtil::getFilePaths(const char * argv[]) {
     string dp = argv[9];
     

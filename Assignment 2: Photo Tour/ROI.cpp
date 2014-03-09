@@ -7,35 +7,48 @@
 //
 
 #include "ROI.h"
-
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
 // mousePressed
 //
 // Call the appropriate function from the ROI class
+//
+//----------------------------------------------------------------------------------------------
 void mousePressed(int event, int x, int y, int flags, void *param) {
     
+    // Retieve the class object as this function is not part of the class
     ROI *roi = static_cast<ROI *>(param);
     
+    // If there is an event, better do some recording.
     if (event == CV_EVENT_LBUTTONDOWN) {
         roi->mouseActions(x, y);
     }
     
 }
-//----------------------------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
 // Init
 //
 // Init bools for roi selection
+//
+//----------------------------------------------------------------------------------------------
 void ROI::init() {
+    // Flow control bools.
     first = false;
     roi_captured = false;
 }
-//----------------------------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
 // mouseActions
 //
 // Flow of control for selecting an ROI
+//----------------------------------------------------------------------------------------------
 void ROI::mouseActions(int x, int y) {
     
+    // Nothing clicked
     if(!first && !roi_captured) {
         
         // no click yet set x1, y1
@@ -48,6 +61,8 @@ void ROI::mouseActions(int x, int y) {
         circle(sourceImage, Point(x1-1,y1-1), 1, Scalar(155,250,150), -1, 8, 0 );
         imshow("ROI", sourceImage);
         
+        
+    // Got first point
     } else if (!roi_captured && first) {
         
         // First click completed set x2, y2
@@ -62,6 +77,8 @@ void ROI::mouseActions(int x, int y) {
         waitKey();
         image = sourceImage(Rect(Point(x1,y1),Point(x2,y2)));
         imshow("ROI", image);
+        
+    // An oportunity to reselect the ROI.
     } else {
         // Already got ROI do we want another?
         std::cout<<"ROI Captured, Click again to recapture \n"<<std::endl;
@@ -70,10 +87,14 @@ void ROI::mouseActions(int x, int y) {
         printf("RESET");
     }
 }
-//----------------------------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
 // Get ROI from mouse input
 // meat of work done above
+//
+//----------------------------------------------------------------------------------------------
 void ROI::getROI(string sI) {
     namedWindow("ROI", CV_WINDOW_AUTOSIZE);
     sourceImage = imread(sI);
@@ -81,9 +102,17 @@ void ROI::getROI(string sI) {
     setMouseCallback("ROI", mousePressed, this);
     waitKey();
 }
-//----------------------------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
 // Get ROI from pre defined numbers & display result
+//
+// TODO ::
+//         There is a chance here that x1, x2, y1 & y2 might not
+//         have been set if interface is not used corrctly
+//
+//----------------------------------------------------------------------------------------------
 void ROI::getROI(string sI, int coords[4]){
 
     namedWindow("ROI", CV_WINDOW_AUTOSIZE);

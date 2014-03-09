@@ -2,8 +2,8 @@
 //  FileUtil.h
 //  Assignment 2: Photo Tour
 //
-//
-//
+//  Check agruments passed at runtime.
+//  Return a list of images to be worked with.
 //
 //  Created by Stephen John Russell on 22/02/2014.
 //  Copyright (c) 2014 Stephen John Russell. All rights reserved.
@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <vector>
+#include <dirent.h>
 #include "Image.h"
 #include "ROI.h"
 
