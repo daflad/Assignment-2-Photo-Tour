@@ -9,7 +9,7 @@
 #include <iostream>
 #include "FileUtil.h"
 #include "ThumbPreview.h"
-#include "ImageAllignment.hpp"
+#include "ImageAllignment.h"
 
 
 
