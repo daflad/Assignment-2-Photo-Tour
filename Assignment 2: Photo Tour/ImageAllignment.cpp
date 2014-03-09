@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Stephen John Russell. All rights reserved.
 //
 
-#include "ImageAllignment.hpp"
+#include "ImageAllignment.h"
 
 void ImageAllignment::init(vector<string>* fp, Mat *m, string dp) {
     

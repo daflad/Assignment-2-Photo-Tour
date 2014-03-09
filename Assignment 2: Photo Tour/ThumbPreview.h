@@ -23,33 +23,44 @@ public:
     // Number of tumbnails per row & column
     int             number_in_row;
     int             number_in_column;
+    
     // Distance between image thumbnils
     int             spacing;
+    
     // Size of containing window
     int             width;
     int             height;
+    
     // Path to the directory/folder holding the images to be thumbnailed
     string          dir_path;
+    
     // List of images, positions & clicked
     vector<Mat>     thumbs;
     vector<Point>   coords;
     vector<int>     scratched;
     
-    void init(vector<string>* fp, string);
+    void            init(vector<string>* fp, string);
+    
     // Render to screen
-    void displayThumbnails(Mat& thumb);
+    void            displayThumbnails(Mat& thumb);
+    
     // Get positions of thumbnails
-    Mat& arrangeThumbnails(Mat& thumb);
+    Mat&            arrangeThumbnails(Mat& thumb);
+    
     // Did the mouse click get one of the tumbnails?
-    int  hitOrMiss(int, int);
+    int             hitOrMiss(int, int);
+    
     // Put a stroke through and highlight a given image
-    void scratchThumbnail();
+    void            scratchThumbnail();
+    
     // Allocate an image to a give screen location (for ordering video)
-    void setImage(int, Mat*);
+    void            setImage(int, Mat*);
+    
     // retieve the clicked image
-    void getSelection(int);
+    void            getSelection(int);
+    
     // assign a selected image
-    void setSelection(int);
+    void            setSelection(int);
     
 };
 

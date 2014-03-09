@@ -22,27 +22,30 @@ class ROI {
 public:
     
     // The image to extract an ROI from
-    Mat sourceImage;
+    Mat     sourceImage;
     
     // The extacted ROI in question
-    Mat image;
+    Mat     image;
     
     // x1, y1 - upper left corner
     // x2, y2 - lower right corner
-    int x1, x2, y1, y2;
+    int     x1, y1,
+            x2, y2;
     
     // Flow of control bools
-    bool roi_captured, first;
+    bool    roi_captured, first;
     
     // init
-    void init();
+    void    init();
 
     // select an ROI with the cursor
-    void getROI(string sourceImage);
+    void    getROI(string sourceImage);
+    
     // slecet an ROI based on predetermined coordinates
-    void getROI(string sourceImage, int coords[4]);
+    void    getROI(string sourceImage, int coords[4]);
+    
     // what to do if mouse events ocour
-    void mouseActions(int x, int y);
+    void    mouseActions(int x, int y);
     
 };
 

@@ -16,9 +16,9 @@ using namespace cv;
 
 class Image {
     
-    Mat matrix;
+    Mat     matrix;
     
-    void init();
+    void    init();
     
 };
 

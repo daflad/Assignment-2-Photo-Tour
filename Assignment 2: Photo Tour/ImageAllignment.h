@@ -25,8 +25,11 @@ class ImageAllignment {
     
 public:
     
+    // List of images to be processed
     vector<Mat>         images;
+    // ROI to be found in other images
     Mat                 roi;
+    // Key points for ROI & current image being comared
     vector<KeyPoint>    roikp;
     vector<KeyPoint>    imgkp;
     

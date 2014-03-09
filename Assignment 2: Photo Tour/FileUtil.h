@@ -24,28 +24,29 @@ class FileUtil {
 
 public:
 
-    vector<string> filepaths;
+    vector<string>  filepaths;
     
-    ROI roi;
+    ROI             roi;
     
     // Setup class vars
-    void init();
+    void            init();
     
     // Check input arguments and take appropriate action
-    bool checkArgs(int argc, const char * argv[]);
+    bool            checkArgs(int argc, const char * argv[]);
 
     // Load all imges in a given array of file paths
-    Image* loadImages(string* filePaths);
+    Image*          loadImages(string* filePaths);
     
     
     
 private:
 
     // Looking for comandline hints as to which flow to follow
-    bool checkfd(int argc, const char * argv[]);
-    bool checkrfd(int argc, const char * argv[]);
+    bool            checkfd(int argc, const char * argv[]);
+    bool            checkrfd(int argc, const char * argv[]);
+    
     // Return all .jpg file paths from a given dircetory
-    bool getFilePaths(const char * argv[]);
+    bool            getFilePaths(const char * argv[]);
 
 };
 

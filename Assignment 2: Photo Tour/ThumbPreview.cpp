@@ -2,11 +2,16 @@
 //  ThumbPreview.cpp
 //  Assignment 2: Photo Tour
 //
+//  Genorate and display all the thumbnail previews for a given folder of images
+//  Re-size images to fit all within a single screen.
+//
+//
 //  Created by Stephen John Russell on 22/02/2014.
 //  Copyright (c) 2014 Stephen John Russell. All rights reserved.
 //
 
 #include "ThumbPreview.h"
+
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
 // mousePressed
