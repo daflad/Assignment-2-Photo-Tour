@@ -40,9 +40,11 @@ public:
     
 private:
 
+    // Looking for comandline hints as to which flow to follow
     bool checkfd(int argc, const char * argv[]);
     bool checkrfd(int argc, const char * argv[]);
-    void getFilePaths(const char * argv[]);
+    // Return all .jpg file paths from a given dircetory
+    bool getFilePaths(const char * argv[]);
 
 };
 

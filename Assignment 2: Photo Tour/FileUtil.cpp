@@ -34,26 +34,46 @@ bool FileUtil::checkArgs(int argc, const char * argv[]) {
         return checkrfd(argc, argv);
     }
     
-    return true;
+    return false;
 };
 //----------------------------------------------------------------------------------------------
-
+//
+// checkfd  -- User does not know the ROI in advance
+//
+// Check that the user has preented 3 arguments precicely.
+// If not provide useage instructions.
+// Load file peths if possible.
+// Prompt user to select ROI in first image.
+//
+// TODO::
+//       What if the ROI doe not complete propperly??
+//
 bool FileUtil::checkfd(int argc, const char **argv) {
+   
     if (argc != 4) {
         // Let the user know what they might have done wrong
         cerr << "USAGE :: " << "Photo Tour -fd \"fileName.jpg\" ./picture_dir/" << endl;
         return false;
     }
     
-    getFilePaths(argv);
+    if (getFilePaths(argv)) {
+        roi.getROI(argv[8]);
+        return true;
+    }
     
-    
-    roi.getROI(argv[8]);
-    
-    return true;
+    return false;
 }
 //----------------------------------------------------------------------------------------------
-
+//
+// checkrfd  -- User selects ROI in advance
+//
+// Check that the user has preented 9 arguments precicely.
+// If not provide useage instructions.
+// Load file peths if possible.
+// Load user selected ROI in first image.
+//
+// TODO::
+//       What if the ROI doe not complete propperly??
 bool FileUtil::checkrfd(int argc, const char **argv) {
     
     if (argc != 10) {
@@ -62,16 +82,21 @@ bool FileUtil::checkrfd(int argc, const char **argv) {
         return false;
     }
 
-    getFilePaths(argv);
+    if (getFilePaths(argv)) {
+        int cord[4] = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]) };
+        roi.getROI(argv[8], cord);
+        return true;
+    }
     
-    int cord[4] = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]) };
-    roi.getROI(argv[8], cord);
-    
-    return true;
+    return false;
 }
 //----------------------------------------------------------------------------------------------
-
-void FileUtil::getFilePaths(const char * argv[]) {
+//
+// getFilePaths
+//
+// Load all file paths into the designated vector for retieval later.
+// Present any problems to the user.
+bool FileUtil::getFilePaths(const char * argv[]) {
     string dp = argv[9];
     
     DIR *dir;
@@ -87,11 +112,13 @@ void FileUtil::getFilePaths(const char * argv[]) {
                 c++;
             }
         }
-        printf ("%d jpg added to list\n", c);
+        printf ("Success :: %d jpg added to list\n", c);
         closedir (dir);
+        return true;
     } else {
         // could not open directory
-        perror ("ERROR");
+        perror ("ERROR :: Plase provide a valid file path to a folder including jpg images.");
+        return false;
     }
     
 }
