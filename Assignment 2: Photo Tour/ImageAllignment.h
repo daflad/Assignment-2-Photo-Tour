@@ -25,6 +25,8 @@ class ImageAllignment {
     
 public:
     
+    int minHessian;
+    
     // List of images to be processed
     vector<Mat>         images;
     // ROI to be found in other images
@@ -37,7 +39,7 @@ public:
     
     void detectFeaturePoints(int);
     
-    void extractDescriptors(int);
+    void extractDescriptors(int, int, int, string);
     
     void pruneResults();
 };

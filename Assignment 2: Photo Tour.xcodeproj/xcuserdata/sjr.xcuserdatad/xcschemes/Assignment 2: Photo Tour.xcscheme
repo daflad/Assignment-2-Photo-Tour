@@ -78,6 +78,14 @@
             argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/img_100.jpg&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/img_000.jpg&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>

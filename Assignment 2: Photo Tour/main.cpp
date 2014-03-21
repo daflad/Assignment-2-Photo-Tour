@@ -32,13 +32,11 @@ int main(int argc, const char * argv[]) {
     
     
     for (int i = 0; i < ia.images.size(); i++) {
-        for (int i = 0; i < 2; i++) {
-            ia.detectFeaturePoints(i);
-            ia.extractDescriptors(i);
-        } 
+
+        ia.detectFeaturePoints(i);
+        ia.extractDescriptors(i, fu.roi.x1, fu.roi.y1, dp);
     }
 
     
     return 0;
 }
-
