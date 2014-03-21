@@ -95,6 +95,8 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
             max_dist = dist;
         }
     }
+    
+    double diff = max_dist - min_dist;
 
     // Debug
 //    printf("-- Max dist : %f \n", max_dist );
@@ -103,21 +105,21 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
     std::vector< DMatch > good_matches;
     bool enoughMatches = false;
     int numMatch;
-    int lnm = -2;
-    float mult = 3.0f;
+    double inc = diff / 10;
+    double mult = min_dist + inc;
     while (!enoughMatches) {
         for( int i = 0; i < descriptors1.rows; i++ ) {
-            if( matches[i].distance < min_dist * mult) {
+            if( matches[i].distance < min_dist + mult) {
                 good_matches.push_back( matches[i]);
             }
         }
         numMatch = (int)good_matches.size();
-        if (numMatch > 100 || lnm == numMatch) {
+        if (numMatch > 30) {
             enoughMatches = true;
         } else {
-            mult += 0.2;
+            mult += inc;
+            good_matches.clear();
         }
-        lnm = numMatch;
     }
     printf("%d matches good found\n", (int)good_matches.size());
     

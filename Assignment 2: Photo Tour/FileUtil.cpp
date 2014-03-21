@@ -73,7 +73,7 @@ bool FileUtil::checkfd(int argc, const char **argv) {
     }
     
     if (getFilePaths(argv)) {
-        roi.getROI(argv[8]);
+        roi.getROI(argv[2]);
         return true;
     }
     
@@ -120,7 +120,14 @@ bool FileUtil::checkrfd(int argc, const char **argv) {
 //
 //----------------------------------------------------------------------------------------------
 bool FileUtil::getFilePaths(const char * argv[]) {
-    string dp = argv[9];
+    string m = argv[1];
+    string dp;
+    if (m == "-fd") {
+        dp = argv[3];
+    } else {
+        dp = argv[10];
+    }
+
     
     DIR *dir;
     struct dirent *ent;

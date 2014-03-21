@@ -21,7 +21,15 @@ int main(int argc, const char * argv[]) {
     fu.init();
     ThumbPreview tp;
     
-    string dp = argv[9];
+    string m = argv[1];
+    string dp;
+    
+    if (m == "-fd") {
+        dp = argv[3];
+    } else {
+        dp = argv[9];
+    }
+
     
     if (fu.checkArgs(argc, argv)) {
         tp.init(&fu.filepaths, dp);
