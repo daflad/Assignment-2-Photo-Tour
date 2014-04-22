@@ -60,31 +60,31 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-rfd"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-fd"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "[ 295 134 346 202 ] "
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/Alien/img_00.jpg&quot;"
+            argument = "[ 295 134 346 202 ] "
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/Alien/img_00.jpg&quot;"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/Alien/&quot;"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/img_100.jpg&quot;"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/img_000.jpg&quot;"
-            isEnabled = "NO">
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

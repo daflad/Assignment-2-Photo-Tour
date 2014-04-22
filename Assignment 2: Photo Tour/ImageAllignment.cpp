@@ -80,14 +80,14 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
     
     // Find matches between descriptors
     FlannBasedMatcher matcher;
-    vector< DMatch > matches;
-    matcher.match( descriptors1, descriptors2, matches );
+    vector<vector< DMatch >> matches;
+    matcher.knnMatch(descriptors1, descriptors2, matches, 2);
     printf("%d matches found\n", (int)matches.size());
     
     // Calculation of max and min distances between keypoints
     double max_dist = 0; double min_dist = 100;
     for (int i = 0; i < descriptors1.rows; i++) {
-        double dist = matches[i].distance;
+        double dist = matches[i][0].distance;
         if ( dist < min_dist ) {
             min_dist = dist;
         }
@@ -109,8 +109,10 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
     double mult = min_dist + inc;
     while (!enoughMatches) {
         for( int i = 0; i < descriptors1.rows; i++ ) {
-            if( matches[i].distance < min_dist + mult) {
-                good_matches.push_back( matches[i]);
+            if (matches[i].size() == 2) {
+                if( matches[i][0].distance < min_dist + mult) {
+                    good_matches.push_back( matches[i][0]);
+                }
             }
         }
         numMatch = (int)good_matches.size();
@@ -158,9 +160,9 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
     
     
     // Display
-    imshow( "Good Matches", img_matches );
+//    imshow( "Good Matches", img_matches );
     
-    waitKey(0);
+//    waitKey(0);
     
     Mat of(3,3, CV_64F);
 
@@ -178,7 +180,7 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
     
     warpPerspective(images[ind], images[ind], H, images[ind].size(), WARP_INVERSE_MAP);
     string fp;
-    dp += "Frame_";
+    dp += "frames/Frame_";
     
     if (ind < 10) {
         fp = dp + to_string(0) + to_string(ind);
@@ -187,6 +189,6 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
     }
     fp += ".jpg";
     imwrite(fp.c_str(), images[ind]);
-    imshow("Good Matches", images[ind]);
-    waitKey(0);
+//    imshow("Good Matches", images[ind]);
+//    waitKey(0);
 }

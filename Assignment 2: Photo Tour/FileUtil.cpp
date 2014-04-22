@@ -125,7 +125,7 @@ bool FileUtil::getFilePaths(const char * argv[]) {
     if (m == "-fd") {
         dp = argv[3];
     } else {
-        dp = argv[10];
+        dp = argv[9];
     }
 
     

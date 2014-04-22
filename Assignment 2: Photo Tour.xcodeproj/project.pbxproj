@@ -69,6 +69,7 @@
 		779C46F618CC7D0600BCCB88 /* libopencv_videostab.2.4.8.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 779C46B918CC7D0600BCCB88 /* libopencv_videostab.2.4.8.dylib */; };
 		779C46F718CC7D0600BCCB88 /* libopencv_videostab.2.4.8.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 779C46BA18CC7D0600BCCB88 /* libopencv_videostab.2.4.8.dylib */; };
 		779C46F818CC7D0600BCCB88 /* cv2.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 779C46C018CC7D0600BCCB88 /* cv2.so */; };
+		77CA19DF18EEA53D00C5F560 /* VideoCopmoser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77CA19DD18EEA53D00C5F560 /* VideoCopmoser.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -155,6 +156,8 @@
 		779C46BC18CC7D0600BCCB88 /* opencv.pc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = opencv.pc; sourceTree = "<group>"; };
 		779C46BF18CC7D0600BCCB88 /* cv.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = cv.py; sourceTree = "<group>"; };
 		779C46C018CC7D0600BCCB88 /* cv2.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = cv2.so; sourceTree = "<group>"; };
+		77CA19DD18EEA53D00C5F560 /* VideoCopmoser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoCopmoser.cpp; sourceTree = "<group>"; };
+		77CA19DE18EEA53D00C5F560 /* VideoCopmoser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoCopmoser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -246,6 +249,8 @@
 		7706420718B89D4100125FC0 /* Assignment 2: Photo Tour */ = {
 			isa = PBXGroup;
 			children = (
+				77CA19DD18EEA53D00C5F560 /* VideoCopmoser.cpp */,
+				77CA19DE18EEA53D00C5F560 /* VideoCopmoser.h */,
 				7706421118B8A04400125FC0 /* Assignment_2__Photo_Tour.1 */,
 				7706421218B8A04400125FC0 /* main.cpp */,
 				7706423918B8A84F00125FC0 /* FileUtil.cpp */,
@@ -408,6 +413,7 @@
 				7706424518B8D8CF00125FC0 /* ThumbPreview.cpp in Sources */,
 				7706424118B8C62D00125FC0 /* ROI.cpp in Sources */,
 				7706423B18B8A84F00125FC0 /* FileUtil.cpp in Sources */,
+				77CA19DF18EEA53D00C5F560 /* VideoCopmoser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

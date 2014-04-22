@@ -10,7 +10,7 @@
 #include "FileUtil.h"
 #include "ThumbPreview.h"
 #include "ImageAllignment.h"
-
+#include "VideoCopmoser.h"
 
 
 using namespace std;
@@ -20,6 +20,7 @@ int main(int argc, const char * argv[]) {
     FileUtil fu;
     fu.init();
     ThumbPreview tp;
+    VideoCopmoser vc;
     
     string m = argv[1];
     string dp;
@@ -44,6 +45,8 @@ int main(int argc, const char * argv[]) {
         ia.detectFeaturePoints(i);
         ia.extractDescriptors(i, fu.roi.x1, fu.roi.y1, dp);
     }
+    
+    vc.writeSequence(ia.images);
 
     
     return 0;
