@@ -210,6 +210,7 @@ void ThumbPreview::scratchThumbnail() {
     // construct large image
     Mat combined = Mat(Size(width,height), thumbs[0].type());
     combined = arrangeThumbnails(combined);
+    
     Mat t = combined.clone();
     
     // how transparrent should the dulling effect be on the image
