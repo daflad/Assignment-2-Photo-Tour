@@ -26,13 +26,11 @@ public:
 
     vector<string>  filepaths;
     
-    ROI             roi;
-    
     // Setup class vars
     void            init();
     
     // Check input arguments and take appropriate action
-    bool            checkArgs(int argc, const char * argv[]);
+    bool            checkArgs(int argc, const char * argv[], ROI *roi);
 
     // Load all imges in a given array of file paths
     Image*          loadImages(string* filePaths);
@@ -42,8 +40,8 @@ public:
 private:
 
     // Looking for comandline hints as to which flow to follow
-    bool            checkfd(int argc, const char * argv[]);
-    bool            checkrfd(int argc, const char * argv[]);
+    bool            checkfd(int argc, const char * argv[], ROI *roi);
+    bool            checkrfd(int argc, const char * argv[], ROI *roi);
     
     // Return all .jpg file paths from a given dircetory
     bool            getFilePaths(const char * argv[]);

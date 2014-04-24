@@ -249,20 +249,20 @@
 		7706420718B89D4100125FC0 /* Assignment 2: Photo Tour */ = {
 			isa = PBXGroup;
 			children = (
-				77CA19DD18EEA53D00C5F560 /* VideoCopmoser.cpp */,
-				77CA19DE18EEA53D00C5F560 /* VideoCopmoser.h */,
 				7706421118B8A04400125FC0 /* Assignment_2__Photo_Tour.1 */,
-				7706421218B8A04400125FC0 /* main.cpp */,
 				7706423918B8A84F00125FC0 /* FileUtil.cpp */,
 				7706423A18B8A84F00125FC0 /* FileUtil.h */,
 				7706423C18B8A96F00125FC0 /* Image.cpp */,
 				7706423D18B8A96F00125FC0 /* Image.h */,
+				7706424618B90BC500125FC0 /* ImageAllignment.cpp */,
+				7706424718B90BC600125FC0 /* ImageAllignment.h */,
+				7706421218B8A04400125FC0 /* main.cpp */,
 				7706423F18B8C62D00125FC0 /* ROI.cpp */,
 				7706424018B8C62D00125FC0 /* ROI.h */,
 				7706424318B8D8CF00125FC0 /* ThumbPreview.cpp */,
 				7706424418B8D8CF00125FC0 /* ThumbPreview.h */,
-				7706424618B90BC500125FC0 /* ImageAllignment.cpp */,
-				7706424718B90BC600125FC0 /* ImageAllignment.h */,
+				77CA19DD18EEA53D00C5F560 /* VideoCopmoser.cpp */,
+				77CA19DE18EEA53D00C5F560 /* VideoCopmoser.h */,
 			);
 			path = "Assignment 2: Photo Tour";
 			sourceTree = "<group>";

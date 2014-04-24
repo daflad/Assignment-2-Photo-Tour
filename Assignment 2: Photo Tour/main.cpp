@@ -15,10 +15,16 @@
 
 using namespace std;
 
+void loadIMG();
+
 int main(int argc, const char * argv[]) {
+    
+    vector<Image> dataSet;
     
     FileUtil fu;
     fu.init();
+    ROI roi;
+    roi.init();
     ThumbPreview tp;
     VideoCopmoser vc;
     
@@ -32,22 +38,24 @@ int main(int argc, const char * argv[]) {
     }
 
     
-    if (fu.checkArgs(argc, argv)) {
+    if (fu.checkArgs(argc, argv, &roi)) {
         tp.init(&fu.filepaths, dp);
     }
     
     ImageAllignment ia;
-    ia.init(&fu.filepaths, &fu.roi.image, dp);
-    
+    ia.init(&fu.filepaths, &roi.image, dp);
     
     for (int i = 0; i < ia.images.size(); i++) {
 
         ia.detectFeaturePoints(i);
-        ia.extractDescriptors(i, fu.roi.x1, fu.roi.y1, dp);
+        ia.extractDescriptors(i, roi.x1, roi.y1, dp);
     }
     
     vc.writeSequence(ia.images);
-
     
     return 0;
+}
+
+void loadIMG() {
+    
 }

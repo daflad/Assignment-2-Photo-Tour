@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------------------------
 
 void FileUtil::init() {
-    roi.init();
+
 }
 
 //----------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ void FileUtil::init() {
 // check useage and report problems
 //
 //----------------------------------------------------------------------------------------------
-bool FileUtil::checkArgs(int argc, const char * argv[]) {
+bool FileUtil::checkArgs(int argc, const char * argv[], ROI *roi) {
     
     string arg = argv[1];
     if (arg != "-fd" && arg != "-rfd") {
@@ -40,11 +40,11 @@ bool FileUtil::checkArgs(int argc, const char * argv[]) {
     }
     
     if (arg == "-fd") {
-         return checkfd(argc, argv);
+         return checkfd(argc, argv, roi);
     }
     
     if (arg == "-rfd") {
-        return checkrfd(argc, argv);
+        return checkrfd(argc, argv, roi);
     }
     
     return false;
@@ -64,7 +64,7 @@ bool FileUtil::checkArgs(int argc, const char * argv[]) {
 //       What if the ROI doe not complete propperly??
 //
 //----------------------------------------------------------------------------------------------
-bool FileUtil::checkfd(int argc, const char **argv) {
+bool FileUtil::checkfd(int argc, const char **argv, ROI *roi) {
    
     if (argc != 4) {
         // Let the user know what they might have done wrong
@@ -73,7 +73,7 @@ bool FileUtil::checkfd(int argc, const char **argv) {
     }
     
     if (getFilePaths(argv)) {
-        roi.getROI(argv[2]);
+        roi->getROI(argv[2]);
         return true;
     }
     
@@ -94,7 +94,7 @@ bool FileUtil::checkfd(int argc, const char **argv) {
 //       What if the ROI doe not complete propperly??
 //
 //----------------------------------------------------------------------------------------------
-bool FileUtil::checkrfd(int argc, const char **argv) {
+bool FileUtil::checkrfd(int argc, const char **argv, ROI *roi) {
     
     if (argc != 10) {
         // Let the user know what they might have done wrong
@@ -104,7 +104,7 @@ bool FileUtil::checkrfd(int argc, const char **argv) {
 
     if (getFilePaths(argv)) {
         int cord[4] = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]) };
-        roi.getROI(argv[8], cord);
+        roi->getROI(argv[8], cord);
         return true;
     }
     
@@ -120,12 +120,15 @@ bool FileUtil::checkrfd(int argc, const char **argv) {
 //
 //----------------------------------------------------------------------------------------------
 bool FileUtil::getFilePaths(const char * argv[]) {
-    string m = argv[1];
+    // Retieve the flag inputted, exit if neither.
+    string flag = argv[1];
     string dp;
-    if (m == "-fd") {
+    if (flag == "-fd") {
         dp = argv[3];
-    } else {
+    } else if (flag == "-rfd") {
         dp = argv[9];
+    } else {
+        return false;
     }
 
     
