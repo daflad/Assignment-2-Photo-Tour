@@ -39,13 +39,16 @@ public:
     vector<Point>   coords;
     vector<int>     scratched;
     
+    // The final image to display
+    Mat             combined;
+    
     void            init(vector<string>* fp, string);
     
     // Render to screen
-    void            displayThumbnails(Mat& thumb);
+    void            displayThumbnails();
     
     // Get positions of thumbnails
-    Mat&            arrangeThumbnails(Mat& thumb);
+    void             arrangeThumbnails();
     
     // Did the mouse click get one of the tumbnails?
     int             hitOrMiss(int, int);

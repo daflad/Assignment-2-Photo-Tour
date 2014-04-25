@@ -36,11 +36,10 @@ void MouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
             tp->scratched.push_back(index);
             tp->scratchThumbnail();
         } else {
-            Mat c = Mat(Size(tp->width,tp->height), tp->thumbs[0].type());
             tp->scratched.clear();
-            tp->displayThumbnails(tp->arrangeThumbnails(c));
-             
+            tp->arrangeThumbnails();
         }
+        tp->displayThumbnails();
     }
 }
 
@@ -59,13 +58,9 @@ void ThumbPreview::init(vector<string>* fp, string dp) {
     // Default values
     number_in_row   = 5;
     spacing         = 20;
-    width           = 1400;
-    height          = 850;
+    width           = 800;
+    height          = 600;
     dir_path        = dp;
-    
-    // Open Preview window & define callback
-    namedWindow("Thumbnail");
-    setMouseCallback("Thumbnail", MouseCallBackFunc, this);
     
     // Read in each image in folder
     for (int i = 0; i < fp->size(); i++) {
@@ -73,6 +68,14 @@ void ThumbPreview::init(vector<string>* fp, string dp) {
         t = imread(dir_path + fp->at(i).c_str());
         thumbs.push_back(t);
     }
+    
+    combined        = Mat::zeros(Size(width,height), thumbs[0].type());
+    
+    // Open Preview window & define callback
+    namedWindow("Thumbnail");
+    setMouseCallback("Thumbnail", MouseCallBackFunc, this);
+    
+    
     
     // the final width of the thumbnails & an idicator to the solution
     bool solution = false;
@@ -101,12 +104,6 @@ void ThumbPreview::init(vector<string>* fp, string dp) {
     for (int i = 0; i < thumbs.size(); i++) {
         resize(thumbs[i], thumbs[i], Size(scaledWidth, scaledHeight));
     }
-    
-    // Make a big matrix for display and place each image from list into correct location
-    Mat combined = Mat::zeros(Size(width,height), thumbs[0].type());
-    combined = arrangeThumbnails(combined);
-    // Display combined image
-    displayThumbnails(combined);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -156,8 +153,7 @@ int ThumbPreview::hitOrMiss(int x, int y) {
 // display and wait for key press
 //
 //----------------------------------------------------------------------------------------------
-void ThumbPreview::displayThumbnails(Mat& combined) {
-
+void ThumbPreview::displayThumbnails() {
     imshow("Thumbnail", combined);
     waitKey();
 }
@@ -169,9 +165,8 @@ void ThumbPreview::displayThumbnails(Mat& combined) {
 // display thumbnails in allocated location
 //
 //----------------------------------------------------------------------------------------------
-Mat& ThumbPreview::arrangeThumbnails(Mat& combined) {
-    
-    // Retieve matrix to be worked upon
+void ThumbPreview::arrangeThumbnails() {
+    // Reset large image to remove border from scratch
     combined = Mat::zeros(Size(width,height), thumbs[0].type());
     
     // The spacing for images
@@ -195,7 +190,6 @@ Mat& ThumbPreview::arrangeThumbnails(Mat& combined) {
             yc += (t.rows + spacing);
         }
     }
-    return combined;
 }
 
 //----------------------------------------------------------------------------------------------
@@ -208,8 +202,7 @@ Mat& ThumbPreview::arrangeThumbnails(Mat& combined) {
 void ThumbPreview::scratchThumbnail() {
     
     // construct large image
-    Mat combined = Mat(Size(width,height), thumbs[0].type());
-    combined = arrangeThumbnails(combined);
+    arrangeThumbnails();
     
     Mat t = combined.clone();
     
@@ -230,9 +223,6 @@ void ThumbPreview::scratchThumbnail() {
     
     // Combine lines and boxes with final combined image
     addWeighted(t, opacity, combined, 1 - opacity, 0, combined);
-    
-    // show user this lovely hard work
-    displayThumbnails(combined);
     
 }
 

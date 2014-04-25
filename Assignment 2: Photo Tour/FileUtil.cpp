@@ -39,10 +39,12 @@ bool FileUtil::checkArgs(int argc, const char * argv[], ROI *roi) {
         return false;
     }
     
+    // ROI not provided
     if (arg == "-fd") {
          return checkfd(argc, argv, roi);
     }
     
+    // ROI provided
     if (arg == "-rfd") {
         return checkrfd(argc, argv, roi);
     }
@@ -61,7 +63,7 @@ bool FileUtil::checkArgs(int argc, const char * argv[], ROI *roi) {
 // Prompt user to select ROI in first image.
 //
 // TODO::
-//       What if the ROI doe not complete propperly??
+//       What if the ROI dose not complete propperly??
 //
 //----------------------------------------------------------------------------------------------
 bool FileUtil::checkfd(int argc, const char **argv, ROI *roi) {

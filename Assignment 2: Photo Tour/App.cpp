@@ -30,6 +30,9 @@ void App::init(int argc, const char **argv) {
 
 
 int App::run() {
+    tp.arrangeThumbnails();
+    tp.displayThumbnails();
+    
     for (int i = 0; i < ia.images.size(); i++) {
         
         ia.detectFeaturePoints(i);
