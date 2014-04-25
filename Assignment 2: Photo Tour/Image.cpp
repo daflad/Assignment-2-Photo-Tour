@@ -7,6 +7,11 @@
 //
 
 #include "Image.h"
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+// Init
+//
+//----------------------------------------------------------------------------------------------
 
 void Image::init(string fp, vector<float> roiCorners, int w, int h) {
     filePath    = fp;
@@ -15,11 +20,14 @@ void Image::init(string fp, vector<float> roiCorners, int w, int h) {
     matrix      = loadImage();
 }
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
 // Load Image
 //
 // Load the image based on the supplied filepath
 // Check what dimentions user has specifed
 // Adjust dimentions to defaults if required
+//----------------------------------------------------------------------------------------------
 Mat Image::loadImage() {
     
     // load image
@@ -35,9 +43,12 @@ Mat Image::loadImage() {
     return temp;
 }
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
 // Resize Image
 //
 // Even simpler
+//----------------------------------------------------------------------------------------------
 void Image::resizeImage(float w, float he) {
     if (width != 0 && height != 0) {
         // resize
@@ -45,11 +56,14 @@ void Image::resizeImage(float w, float he) {
     }
 }
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
 // Get ROI
 //
 // Returns a matrix from the specifed ROI
 // if roiCorners is not of size 4 is will return
 // an empty matrix of no size.
+//----------------------------------------------------------------------------------------------
 Mat Image::getRoi(vector<float> roiCorners) {
     if (roiCorners.size() == 4) {
         return matrix(Rect(Point(roiCorners[0],roiCorners[1]),Point(roiCorners[2],roiCorners[4])));
