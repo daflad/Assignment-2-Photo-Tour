@@ -41,11 +41,13 @@ bool FileUtil::checkArgs(int argc, const char * argv[], ROI *roi) {
     
     // ROI not provided
     if (arg == "-fd") {
-         return checkfd(argc, argv, roi);
+        dirpath = argv[3];
+        return checkfd(argc, argv, roi);
     }
     
     // ROI provided
     if (arg == "-rfd") {
+        dirpath = argv[9];
         return checkrfd(argc, argv, roi);
     }
     

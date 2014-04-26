@@ -25,6 +25,7 @@ class FileUtil {
 public:
 
     vector<string>  filepaths;
+    string          dirpath;
     
     /// Setup class vars
     void            init();
