@@ -12,6 +12,7 @@
 #include <iostream>
 #include <vector>
 #include <opencv2/opencv.hpp>
+#include "Image.h"
 
 using namespace std;
 using namespace cv;
@@ -20,41 +21,48 @@ class ThumbPreview {
     
 public:
     
-    // Number of tumbnails per row & column
-    int             number_in_row;
-    int             number_in_column;
+    /// Number of tumbnails per row & column
+    int             number_in_row, number_in_column;
     
-    // Distance between image thumbnils
+    /// Distance between image thumbnils
     int             spacing;
     
-    // Size of containing window
-    int             width;
-    int             height;
+    /// Size of containing window
+    int             width, height;
     
-    // Path to the directory/folder holding the images to be thumbnailed
+    // Scaled size of thumbnail
+    int             scaledWidth, scaledHeight;
+    
+    /// Half size of claulated thumbnail size
+    float           xOff, yOff;
+    
+    /// Path to the directory/folder holding the images to be thumbnailed
     string          dir_path;
     
-    // List of images, positions & clicked
-    vector<Mat>     thumbs;
+    /// List of positions
     vector<Point>   coords;
+    
+    /// images clicked
     vector<int>     scratched;
     
     // The final image to display
     Mat             combined;
+    int             MATRIX_TYPE;
     
-    void            init(vector<string>* fp, string);
+    
+    void            init(vector<Image> &img, string);
     
     // Render to screen
     void            displayThumbnails();
     
     // Get positions of thumbnails
-    void             arrangeThumbnails();
+    void             arrangeThumbnails(vector<Image> &img);
     
     // Did the mouse click get one of the tumbnails?
     int             hitOrMiss(int, int);
     
     // Put a stroke through and highlight a given image
-    void            scratchThumbnail();
+    void            scratchThumbnail(vector<Image> &img);
     
     // Allocate an image to a give screen location (for ordering video)
     void            setImage(int, Mat*);

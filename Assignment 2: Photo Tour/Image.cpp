@@ -13,11 +13,13 @@
 //
 //----------------------------------------------------------------------------------------------
 
-void Image::init(string fp, vector<float> roiCorners, int w, int h) {
+void Image::init(string fp, string dp, int w, int h) {
     filePath    = fp;
+    dirPath     = dp;
     width       = w;
     height      = h;
     matrix      = loadImage();
+    matrix.copyTo(thumbnail);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -32,14 +34,22 @@ Mat Image::loadImage() {
     
     // load image
     Mat temp;
-    temp = imread(filePath.c_str());
-    // check dimentions
-    if (width == 0 || height == 0) {
-        width = 500;
-        height = temp.rows / width;
+    if (dirPath[dirPath.length() - 1] != '/') {
+        dirPath += "/";
     }
-    // resize
-    resize(temp, temp, Size(width, height));
+    temp = imread(dirPath + filePath);
+    if (temp.cols > 0) {
+        
+        // check dimentions
+        if (width == 0 || height == 0) {
+            width = 500;
+            height = temp.rows * ((float)width / temp.cols);
+        }
+        // resize
+        resize(temp, temp, Size(width, height));
+    } else {
+        cerr << "PANIC :: " << dirPath + filePath << endl;
+    }
     return temp;
 }
 

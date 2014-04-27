@@ -83,7 +83,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/"
+            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

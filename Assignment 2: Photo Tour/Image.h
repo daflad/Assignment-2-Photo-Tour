@@ -24,7 +24,7 @@ class Image {
 public:
     
     /// System location of image
-    string  filePath;
+    string  filePath, dirPath;
     
     // Resolution of full matrix
     //
@@ -44,9 +44,8 @@ public:
     /// Low resolution version of image
     Mat     thumbnail;
     
-    /// Init the image with it's file path
-    /// Image is loaded & ROI captured size of vector is exactly 4
-    void    init(string filePath, vector<float> roiCorners, int width, int height);
+    /// Init the image with it's file path & load Image
+    void    init(string filePath, string dirPath, int width, int height);
     
     // Helpers to set class images
     

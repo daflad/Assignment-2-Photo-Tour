@@ -34,7 +34,7 @@ public:
     bool            checkArgs(int argc, const char * argv[], ROI *roi);
 
     /// Load all imges in a given array of file paths
-    Image*          loadImages(string* filePaths);
+    vector<Image>   loadImages();
     
     
     

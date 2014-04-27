@@ -159,6 +159,16 @@ bool FileUtil::getFilePaths(const char * argv[]) {
     
 }
 
+vector<Image> FileUtil::loadImages() {
+    vector<Image> imList;
+    for (int i = 0; i < filepaths.size(); i++) {
+        Image img;
+        img.init(filepaths[i], dirpath, 0, 0);
+        imList.push_back(img);
+    }
+    return imList;
+}
+
 
 
 

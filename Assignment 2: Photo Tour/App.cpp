@@ -13,7 +13,8 @@ void App::init(int argc, const char **argv) {
     roi.init();
     
     if (fu.checkArgs(argc, argv, &roi)) {
-        tp.init(&fu.filepaths, fu.dirpath);
+        dataSet = fu.loadImages();
+        tp.init(dataSet, fu.dirpath);
     }
     
     ia.init(&fu.filepaths, &roi.image, fu.dirpath);
@@ -21,7 +22,7 @@ void App::init(int argc, const char **argv) {
 
 
 int App::run() {
-    tp.arrangeThumbnails();
+    tp.arrangeThumbnails(dataSet);
     tp.displayThumbnails();
     
     for (int i = 0; i < ia.images.size(); i++) {

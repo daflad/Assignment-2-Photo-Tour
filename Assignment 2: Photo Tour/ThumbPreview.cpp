@@ -19,6 +19,8 @@
 // Call the appropriate function from the ThumbPreview class
 //
 //----------------------------------------------------------------------------------------------
+vector<Image> imgs;
+
 void MouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
     
     // Retieve the class object as this function is not part of the class
@@ -27,17 +29,17 @@ void MouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
     // ******************************************************************** //
     // FOR NOW, CLICKING OUTSIDE AN IMAGE WILL CLEAR THE SCRATCHED ARRAY.   //
     // THIS IS TOO FIDLEY FOR THE FINAL PROGRAM, BETTER TO PROVIDE A BUTTON //
-    // FOR THE USER                                                         //
+    // OR A KEY PRESS FOR THE USER                                          //
     // ******************************************************************** //
     if (event == CV_EVENT_LBUTTONUP) {
         int index = tp->hitOrMiss(x, y);
         // if we have a hit then add it to the list
         if (index > -1){
             tp->scratched.push_back(index);
-            tp->scratchThumbnail();
+            tp->scratchThumbnail(imgs);
         } else {
             tp->scratched.clear();
-            tp->arrangeThumbnails();
+            tp->arrangeThumbnails(imgs);
         }
         tp->displayThumbnails();
     }
@@ -53,7 +55,7 @@ void MouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
 // Display images once complete.
 //
 //----------------------------------------------------------------------------------------------
-void ThumbPreview::init(vector<string>* fp, string dp) {
+void ThumbPreview::init(vector<Image> &img, string dp) {
     
     // Default values
     number_in_row   = 5;
@@ -61,26 +63,17 @@ void ThumbPreview::init(vector<string>* fp, string dp) {
     width           = 800;
     height          = 600;
     dir_path        = dp;
+    MATRIX_TYPE     = img[0].matrix.type();
     
-    // Read in each image in folder
-    for (int i = 0; i < fp->size(); i++) {
-        Mat t;
-        t = imread(dir_path + fp->at(i).c_str());
-        thumbs.push_back(t);
-    }
+    combined        = Mat::zeros(Size(width,height), MATRIX_TYPE);
     
-    combined        = Mat::zeros(Size(width,height), thumbs[0].type());
     
     // Open Preview window & define callback
     namedWindow("Thumbnail");
     setMouseCallback("Thumbnail", MouseCallBackFunc, this);
     
-    
-    
     // the final width of the thumbnails & an idicator to the solution
-    bool solution = false;
-    int scaledWidth;
-    int scaledHeight;
+    bool solution = false;    
     
     // Keep going till you find an answer
     while (!solution) {
@@ -88,9 +81,9 @@ void ThumbPreview::init(vector<string>* fp, string dp) {
         // Start by scaling the image width based on 5 images & given spacing
         scaledWidth = (int)((float)(width - ((number_in_row + 1) * spacing)) / number_in_row);
         // Adjust height accordingly
-        scaledHeight = (int) thumbs.at(0).rows  / (thumbs.at(0).cols / (float)scaledWidth);
+        scaledHeight = (int) img[0].matrix.rows  / (img[0].matrix.cols / (float)scaledWidth);
         // calulate the number that would end up in a clumn
-        number_in_column = ((int)thumbs.size() / number_in_row) + 1;
+        number_in_column = ((int)img.size() / number_in_row) + 1;
         // If there is enough space to fit the images vertically there is a solution
         // Otherwise increas the number in the row and repeat.
         if (number_in_column * (scaledHeight + spacing) < height) {
@@ -100,10 +93,14 @@ void ThumbPreview::init(vector<string>* fp, string dp) {
         }
     }
     
+    xOff = scaledWidth / 2;
+    yOff = scaledHeight / 2;
+    cout << "x :: " << xOff << " y :: " << yOff << endl;
     // Resize each image to the correct size.
-    for (int i = 0; i < thumbs.size(); i++) {
-        resize(thumbs[i], thumbs[i], Size(scaledWidth, scaledHeight));
+    for (int i = 0; i < img.size(); i++) {
+        resize(img[i].thumbnail, img[i].thumbnail, Size(scaledWidth, scaledHeight));
     }
+    imgs            = img;
 }
 
 //----------------------------------------------------------------------------------------------
@@ -117,9 +114,6 @@ int ThumbPreview::hitOrMiss(int x, int y) {
     
     // The largest dimention available
     float min_dist = width;
-    // Distance to the center of thumbnail in x & y respectively
-    float xOff = thumbs[0].cols / 2;
-    float yOff = thumbs[0].rows / 2;
     // init index to -1
     int index = -1;
     
@@ -138,8 +132,8 @@ int ThumbPreview::hitOrMiss(int x, int y) {
     }
     
     // Check to see if the mouse click was outside the image or inside
-    if (x > coords[index].x + thumbs[index].cols || x < coords[index].x ||
-        y > coords[index].y + thumbs[index].rows || y < coords[index].y) {
+    if (x > coords[index].x + scaledWidth || x < coords[index].x ||
+        y > coords[index].y + scaledHeight || y < coords[index].y) {
         index = -1;
     }
     
@@ -155,7 +149,7 @@ int ThumbPreview::hitOrMiss(int x, int y) {
 //----------------------------------------------------------------------------------------------
 void ThumbPreview::displayThumbnails() {
     imshow("Thumbnail", combined);
-    waitKey();
+    waitKey(0);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -165,11 +159,11 @@ void ThumbPreview::displayThumbnails() {
 // display thumbnails in allocated location
 //
 //----------------------------------------------------------------------------------------------
-void ThumbPreview::arrangeThumbnails() {
+void ThumbPreview::arrangeThumbnails(vector<Image> &img) {
     // Reset large image to remove border from scratch
-    combined = Mat::zeros(Size(width,height), thumbs[0].type());
-    
-    // The spacing for images
+    combined = Mat::zeros(Size(width,height), MATRIX_TYPE);
+    coords.clear();
+    // The spacing for imagesΩ
     int xc = spacing;
     int yc = spacing;
     // The current row being added to
@@ -177,8 +171,8 @@ void ThumbPreview::arrangeThumbnails() {
     // For each image
     //      copy image to combined
     //      & update location information
-    for (int i = 0; i < thumbs.size(); i++) {
-        Mat t = thumbs[i];
+    for (int i = 0; i < img.size(); i++) {
+        Mat t = img[i].thumbnail;
         t.copyTo(combined(Rect(Point(xc, yc),Point(xc + t.cols, yc + t.rows))));
         coords.push_back(Point(xc, yc));
         if (row_tracker < number_in_row - 1) {
@@ -199,10 +193,10 @@ void ThumbPreview::arrangeThumbnails() {
 // Place a red line through, a yellow box arround and dull the clicked image
 //
 //----------------------------------------------------------------------------------------------
-void ThumbPreview::scratchThumbnail() {
+void ThumbPreview::scratchThumbnail(vector<Image> &img) {
     
     // construct large image
-    arrangeThumbnails();
+    arrangeThumbnails(img);
     
     Mat t = combined.clone();
     
@@ -212,10 +206,8 @@ void ThumbPreview::scratchThumbnail() {
     // for each image that has been added to the scratch list do what is required.
     for (int i = 0; i < scratched.size(); i++) {
         int index = scratched[i];
-        int scaleWidth = thumbs[index].cols;
-        int scaleHeight = thumbs[index].rows;
         Point p1 = coords[index];
-        Point p2 = Point(p1.x + scaleWidth, p1.y + scaleHeight);
+        Point p2 = Point(p1.x + scaledWidth, p1.y + scaledHeight);
         rectangle(t, p1, p2, Scalar( 0, 0, 50), CV_FILLED, 8, 0);
         rectangle(combined, p1, p2, Scalar( 0, 255, 255), 2, 8, 0);
         line(combined, p2, p1, Scalar( 0, 0, 255), 2, 8, 0);
