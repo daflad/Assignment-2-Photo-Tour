@@ -108,8 +108,7 @@ bool FileUtil::checkrfd(int argc, const char **argv, ROI *roi) {
 
     if (getFilePaths(argv)) {
         int cord[4] = { atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]) };
-        roi->getROI(argv[8], cord);
-        return true;
+        return roi->getROI(argv[8], cord);
     }
     
     return false;

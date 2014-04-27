@@ -62,7 +62,7 @@ void ROI::mouseActions(int x, int y) {
         imshow("ROI", sourceImage);
         
         
-    // Got first point
+        // Got first point
     } else if (!roi_captured && first) {
         
         // First click completed set x2, y2
@@ -78,7 +78,7 @@ void ROI::mouseActions(int x, int y) {
         image = sourceImage(Rect(Point(x1,y1),Point(x2,y2)));
         imshow("ROI", image);
         
-    // An oportunity to reselect the ROI.
+        // An oportunity to reselect the ROI.
     } else {
         // Already got ROI do we want another?
         std::cout<<"ROI Captured, Click again to recapture \n"<<std::endl;
@@ -113,15 +113,28 @@ void ROI::getROI(string sI) {
 //         have been set if interface is not used corrctly
 //
 //----------------------------------------------------------------------------------------------
-void ROI::getROI(string sI, int coords[4]){
-
+bool ROI::getROI(string sI, int coords[4]){
+    
     namedWindow("ROI", CV_WINDOW_AUTOSIZE);
     sourceImage = imread(sI);
     x1 = coords[0];
     y1 = coords[1];
     x2 = coords[2];
     y2 = coords[3];
-    image = sourceImage(Rect(Point(x1,y1),Point(x2,y2)));
-    imshow("ROI", image);
-    waitKey();
+    if (x1 > 0 && y1 > 0 && x2 > 0 && y2 > 0 && x1 < sourceImage.cols && y1 < sourceImage.rows
+        && x2 < sourceImage.cols && y2 < sourceImage.rows) {
+        image = sourceImage(Rect(Point(x1,y1),Point(x2,y2)));
+        imshow("ROI", image);
+        waitKey();
+        return true;
+    } else {
+        cout << "Error :: The coordinates of the ROI provided are greater " <<
+        "than the dimentions of the image" << endl;
+        imshow("ROI", sourceImage);
+        waitKey();
+        return false;
+    }
+    
+    
+    
 }
