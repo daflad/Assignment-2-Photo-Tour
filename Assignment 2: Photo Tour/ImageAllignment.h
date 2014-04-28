@@ -17,6 +17,7 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/nonfree/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
+#include "Image.h"
 
 using namespace std;
 using namespace cv;
@@ -27,19 +28,17 @@ public:
     
     int minHessian;
     
-    // List of images to be processed
-    vector<Mat>         images;
-    // ROI to be found in other images
-    Mat                 roi;
-    // Key points for ROI & current image being comared
+    /// Key points for ROI
     vector<KeyPoint>    roikp;
+    
+    /// Key points for the current image to be comared
     vector<KeyPoint>    imgkp;
     
-    void init(vector<string>*, Mat*, string);
+    void init();
     
-    void detectFeaturePoints(int);
+    void detectFeaturePoints(int, vector<Image> images,  Mat roi);
     
-    void extractDescriptors(int, int, int, string);
+    void extractDescriptors(int, int, int, string, vector<Image> images,  Mat roi);
     
     void pruneResults();
 };

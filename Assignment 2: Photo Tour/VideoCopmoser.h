@@ -14,6 +14,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>  
+#include "Image.h"
 
 using namespace std;
 using namespace cv;
@@ -22,7 +23,7 @@ class VideoCopmoser {
     
 public:
     
-    bool writeSequence(vector<Mat>);
+    bool writeSequence(vector<Image>);
     
 };
 

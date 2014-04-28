@@ -9,12 +9,12 @@
 #include "VideoCopmoser.h"
 
 
-bool VideoCopmoser::writeSequence(vector<Mat> images) {
+bool VideoCopmoser::writeSequence(vector<Image> images) {
     
     Mat output;
     
     VideoWriter outputVideo;
-    outputVideo.open("Test.mov", CV_FOURCC('m', 'p', '4', 'v'), 30, images[0].size(), true);
+    outputVideo.open("Test.mov", CV_FOURCC('m', 'p', '4', 'v'), 30, images[0].matrix.size(), true);
     
     int NUM_FRAMES = 120;
     
@@ -24,9 +24,9 @@ bool VideoCopmoser::writeSequence(vector<Mat> images) {
     
     
     for (int i = 1; i < images.size(); i++) {
-        output = images[i-1];
+        output = images[i-1].matrix;
         for (int j = 0; j < NUM_FRAMES; j++) {
-            addWeighted( images[i], alpha, images[i - 1], 1 - alpha, 0.0, output);
+            addWeighted( images[i].matrix, alpha, images[i - 1].matrix, 1 - alpha, 0.0, output);
             alpha += aInc;
             outputVideo.write(output);
         }

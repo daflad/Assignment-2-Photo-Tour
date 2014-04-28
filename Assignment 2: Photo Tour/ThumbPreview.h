@@ -52,8 +52,10 @@ public:
     
     void            init(vector<Image> &img, string);
     
+    void            updateThumbnails();
+    
     // Render to screen
-    void            displayThumbnails();
+    void            displayThumbnails(bool);
     
     // Get positions of thumbnails
     void             arrangeThumbnails(vector<Image> &img);

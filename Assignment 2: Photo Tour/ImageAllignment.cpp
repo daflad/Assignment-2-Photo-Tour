@@ -16,17 +16,10 @@
 // Read each image into vector
 //
 //----------------------------------------------------------------------------------------------
-void ImageAllignment::init(vector<string>* fp, Mat *m, string dp) {
+void ImageAllignment::init() {
     
     minHessian = 0;
-    
-    roi = *m;
-    
-    for (int i = 0; i < fp->size(); i++) {
-        Mat t;
-        t = imread(dp + fp->at(i).c_str());
-        images.push_back(t);
-    }
+
 }
 
 
@@ -38,7 +31,7 @@ void ImageAllignment::init(vector<string>* fp, Mat *m, string dp) {
 // Detect feature points in the ROI of the first image and everywhere in the second image.
 //
 //----------------------------------------------------------------------------------------------
-void ImageAllignment::detectFeaturePoints(int ind) {
+void ImageAllignment::detectFeaturePoints(int ind, vector<Image> images,  Mat roi) {
 
     Ptr<FeatureDetector> fd = FeatureDetector::create("FAST");
 
@@ -49,7 +42,7 @@ void ImageAllignment::detectFeaturePoints(int ind) {
 //    
 //    drawKeypoints(roi, roikp, roi, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
 //    
-    fd->detect(images[ind], imgkp);
+    fd->detect(images[ind].matrix, imgkp);
     
 //    drawKeypoints(images[ind], imgkp, images[ind], Scalar::all(-1), DrawMatchesFlags::DEFAULT);
 //    
@@ -69,14 +62,14 @@ void ImageAllignment::detectFeaturePoints(int ind) {
 //       Make interface for user to chose algorithm at run time
 //
 //----------------------------------------------------------------------------------------------
-void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
+void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vector<Image> images,  Mat roi) {
     
     Ptr<DescriptorExtractor> de = DescriptorExtractor::create("SIFT");
 
     // Compute descriptors
     Mat descriptors1, descriptors2;
     de->compute(roi, roikp, descriptors1);
-    de->compute(images[ind], imgkp, descriptors2);
+    de->compute(images[ind].matrix, imgkp, descriptors2);
     
     // Find matches between descriptors
     FlannBasedMatcher matcher;
@@ -127,7 +120,7 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
     
     // For debug, remove from final animation
     Mat img_matches;
-    drawMatches( roi, roikp, images[ind], imgkp, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
+    drawMatches( roi, roikp, images[ind].matrix, imgkp, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
                 vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
     //-- Localize the object from img_1 in img_2
     std::vector<Point2f> obj;
@@ -178,7 +171,7 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
     
     H *= of;
     
-    warpPerspective(images[ind], images[ind], H, images[ind].size(), WARP_INVERSE_MAP);
+    warpPerspective(images[ind].matrix, images[ind].matrix, H, images[ind].matrix.size(), WARP_INVERSE_MAP);
     string fp;
     dp += "frames/Frame_";
     
@@ -188,7 +181,7 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp) {
         fp = dp + to_string(ind);
     }
     fp += ".jpg";
-    imwrite(fp.c_str(), images[ind]);
+    imwrite(fp.c_str(), images[ind].matrix);
 //    imshow("Good Matches", images[ind]);
 //    waitKey(0);
 }

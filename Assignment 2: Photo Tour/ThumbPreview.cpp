@@ -41,7 +41,7 @@ void MouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
             tp->scratched.clear();
             tp->arrangeThumbnails(imgs);
         }
-        tp->displayThumbnails();
+        tp->displayThumbnails(true);
     }
 }
 
@@ -147,9 +147,9 @@ int ThumbPreview::hitOrMiss(int x, int y) {
 // display and wait for key press
 //
 //----------------------------------------------------------------------------------------------
-void ThumbPreview::displayThumbnails() {
+void ThumbPreview::displayThumbnails(bool loading) {
     imshow("Thumbnail", combined);
-    waitKey(0);
+    waitKey(30);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -172,6 +172,8 @@ void ThumbPreview::arrangeThumbnails(vector<Image> &img) {
     //      copy image to combined
     //      & update location information
     for (int i = 0; i < img.size(); i++) {
+        img[i].updateThumb();
+        resize(img[i].thumbnail, img[i].thumbnail, Size(scaledWidth, scaledHeight));
         Mat t = img[i].thumbnail;
         t.copyTo(combined(Rect(Point(xc, yc),Point(xc + t.cols, yc + t.rows))));
         coords.push_back(Point(xc, yc));

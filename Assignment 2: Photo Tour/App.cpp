@@ -17,21 +17,24 @@ void App::init(int argc, const char **argv) {
         tp.init(dataSet, fu.dirpath);
     }
     
-    ia.init(&fu.filepaths, &roi.image, fu.dirpath);
+    ia.init();
 }
 
 
 int App::run() {
     tp.arrangeThumbnails(dataSet);
-    tp.displayThumbnails();
+    tp.displayThumbnails(true);
     
-    for (int i = 0; i < ia.images.size(); i++) {
+    for (int i = 0; i < dataSet.size(); i++) {
         
-        ia.detectFeaturePoints(i);
-        ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath);
+        ia.detectFeaturePoints(i, dataSet, roi.image);
+        ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image);
+        tp.arrangeThumbnails(dataSet);
+        tp.displayThumbnails(false);
     }
+    tp.displayThumbnails(true);
     
-    vc.writeSequence(ia.images);
+    vc.writeSequence(dataSet);
     
     return 0;
 

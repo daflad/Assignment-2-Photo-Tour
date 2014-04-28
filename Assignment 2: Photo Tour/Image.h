@@ -56,6 +56,7 @@ public:
     /// Can be used for thumbnail too
     void    resizeImage(float width, float height);
     
+    void    updateThumb();
 private:
     /// file path not included as required for init.
     Mat     loadImage();

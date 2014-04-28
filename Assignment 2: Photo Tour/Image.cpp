@@ -42,7 +42,7 @@ Mat Image::loadImage() {
         
         // check dimentions
         if (width == 0 || height == 0) {
-            width = 500;
+            width = 800;
             height = temp.rows * ((float)width / temp.cols);
         }
         // resize
@@ -80,4 +80,8 @@ Mat Image::getRoi(vector<float> roiCorners) {
     } else {
         return Mat();
     }
+}
+
+void Image::updateThumb() {
+    matrix.copyTo(thumbnail);
 }
