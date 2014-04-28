@@ -9,7 +9,7 @@
 #include "VideoCopmoser.h"
 
 
-bool VideoCopmoser::writeSequence(vector<Image> images) {
+bool VideoCopmoser::writeSequence(vector<Image> images, vector<int> chosen) {
     
     Mat output;
     
@@ -23,10 +23,10 @@ bool VideoCopmoser::writeSequence(vector<Image> images) {
     float alpha = 0;
     
     
-    for (int i = 1; i < images.size(); i++) {
-        output = images[i-1].matrix;
+    for (int i = 1; i < chosen.size(); i++) {
+        output = images[chosen[i-1]].matrix;
         for (int j = 0; j < NUM_FRAMES; j++) {
-            addWeighted( images[i].matrix, alpha, images[i - 1].matrix, 1 - alpha, 0.0, output);
+            addWeighted( images[chosen[i]].matrix, alpha, images[chosen[i - 1]].matrix, 1 - alpha, 0.0, output);
             alpha += aInc;
             outputVideo.write(output);
         }

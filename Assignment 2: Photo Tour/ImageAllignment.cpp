@@ -75,10 +75,10 @@ void ImageAllignment::detectFeaturePoints(int ind, vector<Image> images,  Mat ro
     printParams(fd);
     
 //    fd->set("minDistance", 0.5);
-    fd->set("qualityLevel", 0.09);
+    fd->set("qualityLevel", 0.04);
 //    fd->set("nfeatures", 3);
     fd->set("useHarrisDetector", true);
-    fd->set("k", 0.1);
+    fd->set("k", 0.04);
     
 
     fd->detect(roi, roikp);

@@ -34,7 +34,21 @@ int App::run() {
     }
     tp.displayThumbnails(true);
     
-    vc.writeSequence(dataSet);
+    vector<int> chosen;
+    
+    for (int i = 0; i < dataSet.size(); i++) {
+        bool hit = false;
+        for (int j = 0; j < tp.scratched.size(); j++) {
+            if (tp.scratched[j] == i) {
+                hit = true;
+            }
+        }
+        if (!hit) {
+            chosen.push_back(i);
+        }
+    }
+    
+    vc.writeSequence(dataSet, chosen);
     
     return 0;
 
