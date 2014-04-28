@@ -39,7 +39,7 @@ void printParams( cv::Algorithm* algorithm ) {
             case cv::Param::MAT_VECTOR:
                 typeText = "Mat vector";
                 break;
-        }
+            }
         std::cout << "Parameter '" << param << "' type=" << typeText << " help=" << helpText << std::endl;
     }
 }
@@ -75,7 +75,7 @@ void ImageAllignment::detectFeaturePoints(int ind, vector<Image> images,  Mat ro
     printParams(fd);
     
 //    fd->set("minDistance", 0.5);
-    fd->set("qualityLevel", 0.05);
+    fd->set("qualityLevel", 0.09);
 //    fd->set("nfeatures", 3);
     fd->set("useHarrisDetector", true);
     fd->set("k", 0.1);
@@ -210,17 +210,9 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     
 //    waitKey(0);
     
-    Mat of(3,3, CV_64F);
-
-    of.at<double>(0,0) = 1;
-    of.at<double>(0,1) = 0;
+    Mat of = Mat::eye(3,3, CV_64F);
     of.at<double>(0,2) = -x1;
-    of.at<double>(1,0) = 0;
-    of.at<double>(1,1) = 1;
     of.at<double>(1,2) = -y1;
-    of.at<double>(2,0) = 0;
-    of.at<double>(2,1) = 0;
-    of.at<double>(2,2) = 1;
     
     H *= of;
     
