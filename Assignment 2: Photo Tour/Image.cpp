@@ -38,18 +38,18 @@ Mat Image::loadImage() {
         dirPath += "/";
     }
     temp = imread(dirPath + filePath);
-    if (temp.cols > 0) {
-        
-        // check dimentions
-        if (width == 0 || height == 0) {
-            width = 800;
-            height = temp.rows * ((float)width / temp.cols);
-        }
-        // resize
-        resize(temp, temp, Size(width, height));
-    } else {
-        cerr << "PANIC :: " << dirPath + filePath << endl;
-    }
+//    if (temp.cols > 0) {
+//        
+//        // check dimentions
+//        if (width == 0 || height == 0) {
+//            width = 800;
+//            height = temp.rows * ((float)width / temp.cols);
+//        }
+//        // resize
+//        resize(temp, temp, Size(width, height));
+//    } else {
+//        cerr << "PANIC :: " << dirPath + filePath << endl;
+//    }
     return temp;
 }
 

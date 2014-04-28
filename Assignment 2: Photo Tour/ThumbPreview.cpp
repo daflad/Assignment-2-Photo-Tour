@@ -149,7 +149,11 @@ int ThumbPreview::hitOrMiss(int x, int y) {
 //----------------------------------------------------------------------------------------------
 void ThumbPreview::displayThumbnails(bool loading) {
     imshow("Thumbnail", combined);
-    waitKey(30);
+    if (!loading) {
+        waitKey(30);
+    } else {
+        waitKey();
+    }
 }
 
 //----------------------------------------------------------------------------------------------

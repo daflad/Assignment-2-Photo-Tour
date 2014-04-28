@@ -7,6 +7,43 @@
 //
 
 #include "ImageAllignment.h"
+void printParams( cv::Algorithm* algorithm ) {
+    std::vector<std::string> parameters;
+    algorithm->getParams(parameters);
+    
+    for (int i = 0; i < (int) parameters.size(); i++) {
+        std::string param = parameters[i];
+        int type = algorithm->paramType(param);
+        std::string helpText = algorithm->paramHelp(param);
+        std::string typeText;
+        
+        switch (type) {
+            case cv::Param::BOOLEAN:
+                typeText = "bool";
+                break;
+            case cv::Param::INT:
+                typeText = "int";
+                break;
+            case cv::Param::REAL:
+                typeText = "real (double)";
+                break;
+            case cv::Param::STRING:
+                typeText = "string";
+                break;
+            case cv::Param::MAT:
+                typeText = "Mat";
+                break;
+            case cv::Param::ALGORITHM:
+                typeText = "Algorithm";
+                break;
+            case cv::Param::MAT_VECTOR:
+                typeText = "Mat vector";
+                break;
+        }
+        std::cout << "Parameter '" << param << "' type=" << typeText << " help=" << helpText << std::endl;
+    }
+}
+
 
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
@@ -18,7 +55,7 @@
 //----------------------------------------------------------------------------------------------
 void ImageAllignment::init() {
     
-    minHessian = 0;
+    minHessian = 400;
 
 }
 
@@ -33,16 +70,24 @@ void ImageAllignment::init() {
 //----------------------------------------------------------------------------------------------
 void ImageAllignment::detectFeaturePoints(int ind, vector<Image> images,  Mat roi) {
 
-    Ptr<FeatureDetector> fd = FeatureDetector::create("FAST");
+    Ptr<FeatureDetector> fd = FeatureDetector::create("GFTT");
 
+    printParams(fd);
+    
+//    fd->set("minDistance", 0.5);
+    fd->set("qualityLevel", 0.05);
+//    fd->set("nfeatures", 3);
+    fd->set("useHarrisDetector", true);
+    fd->set("k", 0.1);
+    
 
-//    fd->set("hessianThreshold", minHessian);
-//
     fd->detect(roi, roikp);
 //    
 //    drawKeypoints(roi, roikp, roi, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
-//    
-    fd->detect(images[ind].matrix, imgkp);
+//
+    Mat temp;
+    cvtColor(images[ind].matrix,temp,CV_BGR2GRAY);
+    fd->detect(temp , imgkp);
     
 //    drawKeypoints(images[ind], imgkp, images[ind], Scalar::all(-1), DrawMatchesFlags::DEFAULT);
 //    
@@ -66,6 +111,8 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     
     Ptr<DescriptorExtractor> de = DescriptorExtractor::create("SIFT");
 
+//    de->set("threshold", 300);
+    
     // Compute descriptors
     Mat descriptors1, descriptors2;
     de->compute(roi, roikp, descriptors1);
@@ -73,14 +120,17 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     
     // Find matches between descriptors
     FlannBasedMatcher matcher;
-    vector<vector< DMatch >> matches;
-    matcher.knnMatch(descriptors1, descriptors2, matches, 2);
-    printf("%d matches found\n", (int)matches.size());
+    vector<vector< DMatch >> matches1;
+    vector<vector< DMatch >> matches2;
+    matcher.knnMatch(descriptors1, descriptors2, matches1, 2);
+    matcher.knnMatch(descriptors2, descriptors1, matches2, 2);
+    printf("%d matches found ROI -> IMG\n", (int)matches1.size());
+    printf("%d matches found IMG -> ROI\n", (int)matches2.size());
     
     // Calculation of max and min distances between keypoints
     double max_dist = 0; double min_dist = 100;
     for (int i = 0; i < descriptors1.rows; i++) {
-        double dist = matches[i][0].distance;
+        double dist = matches1[i][0].distance;
         if ( dist < min_dist ) {
             min_dist = dist;
         }
@@ -94,29 +144,33 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     // Debug
 //    printf("-- Max dist : %f \n", max_dist );
 //    printf("-- Min dist : %f \n", min_dist );
-    
+    vector<vector< DMatch >> symMatch;
     std::vector< DMatch > good_matches;
     bool enoughMatches = false;
     int numMatch;
     double inc = diff / 10;
     double mult = min_dist + inc;
     while (!enoughMatches) {
-        for( int i = 0; i < descriptors1.rows; i++ ) {
-            if (matches[i].size() == 2) {
-                if( matches[i][0].distance < min_dist + mult) {
-                    good_matches.push_back( matches[i][0]);
+        for( int i = 0; i < matches1.size(); i++ ) {
+            for( int j = 0; j < matches2.size(); j++ ) {
+                if (matches1[i].size() == 2) {
+                    if (matches1[i][0].queryIdx == matches2[j][0].queryIdx) {
+                        if( matches1[i][0].distance < min_dist + mult) {
+                            good_matches.push_back( matches1[i][0]);
+                        }
+                    }
                 }
             }
         }
         numMatch = (int)good_matches.size();
-        if (numMatch > 30) {
+        if (numMatch > 9) {
             enoughMatches = true;
         } else {
             mult += inc;
             good_matches.clear();
         }
     }
-    printf("%d matches good found\n", (int)good_matches.size());
+    printf("%d good matches found\n", (int)good_matches.size());
     
     // For debug, remove from final animation
     Mat img_matches;
@@ -126,8 +180,7 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     std::vector<Point2f> obj;
     std::vector<Point2f> scene;
     
-    for( size_t i = 0; i < good_matches.size(); i++ )
-    {
+    for( size_t i = 0; i < good_matches.size(); i++ ) {
         //-- Get the keypoints from the good matches
         obj.push_back( roikp[ good_matches[i].queryIdx ].pt );
         scene.push_back( imgkp[ good_matches[i].trainIdx ].pt );
