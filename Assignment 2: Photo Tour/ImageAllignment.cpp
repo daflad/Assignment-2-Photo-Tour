@@ -39,7 +39,7 @@ void printParams( cv::Algorithm* algorithm ) {
             case cv::Param::MAT_VECTOR:
                 typeText = "Mat vector";
                 break;
-            }
+        }
         std::cout << "Parameter '" << param << "' type=" << typeText << " help=" << helpText << std::endl;
     }
 }
@@ -56,7 +56,7 @@ void printParams( cv::Algorithm* algorithm ) {
 void ImageAllignment::init() {
     
     minHessian = 400;
-
+    
 }
 
 
@@ -68,33 +68,31 @@ void ImageAllignment::init() {
 // Detect feature points in the ROI of the first image and everywhere in the second image.
 //
 //----------------------------------------------------------------------------------------------
-void ImageAllignment::detectFeaturePoints(int ind, vector<Image> images,  Mat roi) {
-
+void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat roi) {
+    
     Ptr<FeatureDetector> fd = FeatureDetector::create("GFTT");
-
-//    printParams(fd);
+    roikp.clear();
+    imgkp.clear();
+    //    printParams(fd);
     
-//    fd->set("minDistance", 0.5);
-    fd->set("qualityLevel", 0.04);
-//    fd->set("nfeatures", 3);
+    fd->set("qualityLevel", 0.019);
     fd->set("useHarrisDetector", true);
-    fd->set("k", 0.04);
+    fd->set("k", 0.08);
     
-
     fd->detect(roi, roikp);
-//    
-//    drawKeypoints(roi, roikp, roi, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
-//
+    //
+    //    drawKeypoints(roi, roikp, roi, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
+    //
     Mat temp;
-    cvtColor(images[ind].matrix,temp,CV_BGR2GRAY);
+    cvtColor(images[ind].matrix, temp, CV_BGR2GRAY);
     fd->detect(temp , imgkp);
     
-//    drawKeypoints(images[ind], imgkp, images[ind], Scalar::all(-1), DrawMatchesFlags::DEFAULT);
-//    
-//    imshow("ROI", roi);
-//    namedWindow("NewFeats");
-//    imshow("NewFeats", images[ind]);
-
+    //    drawKeypoints(images[ind], imgkp, images[ind], Scalar::all(-1), DrawMatchesFlags::DEFAULT);
+    //
+    //    imshow("ROI", roi);
+    //    namedWindow("NewFeats");
+    //    imshow("NewFeats", images[ind]);
+    
 }
 
 //----------------------------------------------------------------------------------------------
@@ -107,11 +105,15 @@ void ImageAllignment::detectFeaturePoints(int ind, vector<Image> images,  Mat ro
 //       Make interface for user to chose algorithm at run time
 //
 //----------------------------------------------------------------------------------------------
-void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vector<Image> images,  Mat roi) {
+bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vector<Image> &images,  Mat roi, float accuracy) {
     
     Ptr<DescriptorExtractor> de = DescriptorExtractor::create("SIFT");
-
-//    de->set("threshold", 300);
+    
+//    printParams(de);
+    
+    de->set("contrastThreshold", 20.5);
+    de->set("edgeThreshold", 10.9);
+    de->set("sigma", 0.5);
     
     // Compute descriptors
     Mat descriptors1, descriptors2;
@@ -124,8 +126,8 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     vector<vector< DMatch >> matches2;
     matcher.knnMatch(descriptors1, descriptors2, matches1, 2);
     matcher.knnMatch(descriptors2, descriptors1, matches2, 2);
-//    printf("%d matches found ROI -> IMG\n", (int)matches1.size());
-//    printf("%d matches found IMG -> ROI\n", (int)matches2.size());
+    //    printf("%d matches found ROI -> IMG\n", (int)matches1.size());
+    //    printf("%d matches found IMG -> ROI\n", (int)matches2.size());
     
     // Calculation of max and min distances between keypoints
     double max_dist = 0; double min_dist = 100;
@@ -140,10 +142,10 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     }
     
     double diff = max_dist - min_dist;
-
+    
     // Debug
-//    printf("-- Max dist : %f \n", max_dist );
-//    printf("-- Min dist : %f \n", min_dist );
+    //    printf("-- Max dist : %f \n", max_dist );
+    //    printf("-- Min dist : %f \n", min_dist );
     vector<vector< DMatch >> symMatch;
     std::vector< DMatch > good_matches;
     bool enoughMatches = false;
@@ -151,26 +153,25 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     double inc = diff / 10;
     double mult = min_dist + inc;
     while (!enoughMatches) {
+        good_matches.clear();
         for( int i = 0; i < matches1.size(); i++ ) {
             for( int j = 0; j < matches2.size(); j++ ) {
-                if (matches1[i].size() == 2) {
-                    if (matches1[i][0].queryIdx == matches2[j][0].queryIdx) {
-                        if( matches1[i][0].distance < min_dist + mult) {
-                            good_matches.push_back( matches1[i][0]);
-                        }
+                if (matches1[i][0].queryIdx == matches2[j][0].queryIdx) {
+                    if( matches1[i][0].distance < min_dist + mult) {
+                        good_matches.push_back( matches1[i][0]);
                     }
                 }
             }
         }
         numMatch = (int)good_matches.size();
-        if (numMatch > 9) {
+        if (numMatch > 6) {
             enoughMatches = true;
         } else {
             mult += inc;
             good_matches.clear();
         }
     }
-//    printf("%d good matches found\n", (int)good_matches.size());
+    //    printf("%d good matches found\n", (int)good_matches.size());
     
     // For debug, remove from final animation
     Mat img_matches;
@@ -185,8 +186,8 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
         obj.push_back( roikp[ good_matches[i].queryIdx ].pt );
         scene.push_back( imgkp[ good_matches[i].trainIdx ].pt );
     }
-    
-    Mat H = findHomography( obj, scene, RANSAC );
+    vector<uchar> mask;
+    Mat H = findHomography( obj, scene, mask, CV_RANSAC, 3);
     
     //-- Get the corners from the image_1 ( the object to be "detected" )
     std::vector<Point2f> obj_corners(4);
@@ -201,7 +202,32 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     of.at<double>(1,2) = -y1;
     
     H *= of;
+    int numInliers = 0;
+    for (int i = 0; i < mask.size(); i++) {
+        if ((int)mask[i] == 1) {
+            numInliers++;
+        }
+    }
+    if ((float)numInliers > (float)mask.size()*accuracy) {
+        if (scene_corners[0].x > 0 && scene_corners[0].y > 0
+            && scene_corners[2].x > 0 && scene_corners[2].y > 0) {
+            if (scene_corners[0].x < images[ind].matrix.cols
+                && scene_corners[0].y < images[ind].matrix.rows
+                && scene_corners[2].x < images[ind].matrix.cols
+                && scene_corners[2].y < images[ind].matrix.rows) {
+            
+                vector<float> roi_co;
+                roi_co.push_back(scene_corners[0].x);
+                roi_co.push_back(scene_corners[0].y);
+                roi_co.push_back(scene_corners[2].x);
+                roi_co.push_back(scene_corners[2].y);
+                images[ind].roi.image = images[ind].getRoi(roi_co);
+                images[ind].roi.x1 = roi_co[0];
+                images[ind].roi.y1 = roi_co[1];
+                warpPerspective(images[ind].matrix, images[ind].matrix, H, images[ind].matrix.size(), WARP_INVERSE_MAP);
+            }
+        }
+    }
     
-    warpPerspective(images[ind].matrix, images[ind].matrix, H, images[ind].matrix.size(), WARP_INVERSE_MAP);
-
+    return images[ind].newROI;
 }

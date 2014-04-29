@@ -60,8 +60,8 @@ void ThumbPreview::init(vector<Image> &img, string dp) {
     // Default values
     number_in_row   = 5;
     spacing         = 20;
-    width           = 800;
-    height          = 600;
+    width           = 1200;
+    height          = 900;
     dir_path        = dp;
     MATRIX_TYPE     = img[0].matrix.type();
     

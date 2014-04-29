@@ -61,7 +61,7 @@
 		7706424018B8C62D00125FC0 /* ROI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ROI.h; sourceTree = "<group>"; };
 		7706424318B8D8CF00125FC0 /* ThumbPreview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThumbPreview.cpp; sourceTree = "<group>"; };
 		7706424418B8D8CF00125FC0 /* ThumbPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThumbPreview.h; sourceTree = "<group>"; };
-		7706424618B90BC500125FC0 /* ImageAllignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageAllignment.cpp; sourceTree = "<group>"; };
+		7706424618B90BC500125FC0 /* ImageAllignment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageAllignment.cpp; sourceTree = "<group>"; wrapsLines = 0; };
 		7706424718B90BC600125FC0 /* ImageAllignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageAllignment.h; sourceTree = "<group>"; };
 		77979D1619095FB50043C70D /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = App.cpp; sourceTree = "<group>"; };
 		77979D1719095FB50043C70D /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = App.h; sourceTree = "<group>"; };

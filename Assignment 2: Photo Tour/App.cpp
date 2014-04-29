@@ -27,17 +27,17 @@ void App::init(int argc, const char **argv) {
 int App::run() {
     
     while (!exit) {
-
+        
         tp.arrangeThumbnails(dataSet);
         tp.displayThumbnails();
-
+        
         if (!alligned) {
-            allign();    
+            allign();
         }
         
         int wk = waitKey();
         keyCheck(wk);
-
+        
         vector<int> chosen;
         
         for (int i = 0; i < dataSet.size(); i++) {
@@ -51,7 +51,7 @@ int App::run() {
                 chosen.push_back(i);
             }
         }
-
+        
         if (writeVID) {
             cout << "writing video" << endl;
             writeVideo(chosen);
@@ -63,7 +63,7 @@ int App::run() {
             writeImages(chosen);
             writeIMG = false;
         }
-
+        
     }
     
     return 0;
@@ -90,18 +90,37 @@ void App::writeImages(vector<int> chosen) {
     vc.writeImages(dataSet, chosen, fu.dirpath);
 }
 
-void App::allign() {
-
+void App::lookForNew() {
+    cout << "looking" << endl;
     for (int i = 0; i < dataSet.size(); i++) {
+        if (dataSet[i].newROI) {
+            for (int j = 0; j < dataSet.size(); j++) {
+                if (!dataSet[j].newROI && j != i) {
+                    ia.detectFeaturePoints(j, dataSet, dataSet[i].roi.image);
+                    if (ia.extractDescriptors(j, dataSet[i].roi.x1, dataSet[i].roi.y1, fu.dirpath, dataSet, dataSet[i].roi.image, 0.9)) {
+                        tp.arrangeThumbnails(dataSet);
+                        tp.displayThumbnails();
+                        waitKey(30);
+                        lookForNew();
+                    }
+                }
+            }
+        }
+    }
+}
 
+void App::allign() {
+    
+    for (int i = 0; i < dataSet.size(); i++) {
+        
         ia.detectFeaturePoints(i, dataSet, roi.image);
-        ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image);
+        ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image, 0.55);
         tp.arrangeThumbnails(dataSet);
         tp.displayThumbnails();
         waitKey(30);
     }
-
+    lookForNew();
     tp.displayThumbnails();
-    
+    cout << "All Alligned!" << endl;
     alligned = true;
 }

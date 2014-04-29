@@ -30,6 +30,7 @@ private:
     void            keyCheck(int wk);
     
     void            allign();
+    void            lookForNew();
     void            writeVideo(vector<int> chosen);
     void            writeImages(vector<int> chosen);
     

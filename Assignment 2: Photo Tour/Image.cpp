@@ -20,6 +20,7 @@ void Image::init(string fp, string dp, int w, int h) {
     height      = h;
     matrix      = loadImage();
     matrix.copyTo(thumbnail);
+    newROI      = false;
 }
 
 //----------------------------------------------------------------------------------------------
@@ -76,7 +77,8 @@ void Image::resizeImage(float w, float he) {
 //----------------------------------------------------------------------------------------------
 Mat Image::getRoi(vector<float> roiCorners) {
     if (roiCorners.size() == 4) {
-        return matrix(Rect(Point(roiCorners[0],roiCorners[1]),Point(roiCorners[2],roiCorners[4])));
+        newROI = true;
+        return matrix(Rect(Point(roiCorners[0],roiCorners[1]),Point(roiCorners[2],roiCorners[3])));
     } else {
         return Mat();
     }

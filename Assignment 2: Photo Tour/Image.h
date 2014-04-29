@@ -26,6 +26,9 @@ public:
     /// System location of image
     string  filePath, dirPath;
     
+    /// Has ROI been found
+    bool    newROI;
+    
     // Resolution of full matrix
     //
     /// NOTE ABOUT WIDTH & HEIGHT
@@ -45,7 +48,7 @@ public:
     Mat     thumbnail;
     
     /// Init the image with it's file path & load Image
-    void    init(string filePath, string dirPath, int width, int height);
+    void    init(string filePath, string dP, int width, int height);
     
     // Helpers to set class images
     
