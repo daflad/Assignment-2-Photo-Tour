@@ -24,7 +24,7 @@ class VideoCopmoser {
 public:
     
     bool writeSequence(vector<Image>, vector<int>);
-    
+    bool writeImages(vector<Image>, vector<int>, string);
 };
 
 

@@ -55,7 +55,7 @@ public:
     void            updateThumbnails();
     
     // Render to screen
-    void            displayThumbnails(bool);
+    void            displayThumbnails();
     
     // Get positions of thumbnails
     void             arrangeThumbnails(vector<Image> &img);

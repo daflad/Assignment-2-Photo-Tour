@@ -27,6 +27,13 @@ public:
     
 private:
     
+    void            keyCheck(int wk);
+    
+    void            allign();
+    void            writeVideo(vector<int> chosen);
+    void            writeImages(vector<int> chosen);
+    
+    
     string          dp;
     vector<Image>   dataSet;
     FileUtil        fu;
@@ -35,6 +42,10 @@ private:
     VideoCopmoser   vc;
     ImageAllignment ia;
     
+    bool            alligned;
+    bool            exit;
+    bool            writeIMG;
+    bool            writeVID;
 };
 
 #endif /* defined(__Assignment_2__Photo_Tour__App__) */

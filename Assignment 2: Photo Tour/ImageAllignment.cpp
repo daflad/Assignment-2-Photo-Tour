@@ -72,7 +72,7 @@ void ImageAllignment::detectFeaturePoints(int ind, vector<Image> images,  Mat ro
 
     Ptr<FeatureDetector> fd = FeatureDetector::create("GFTT");
 
-    printParams(fd);
+//    printParams(fd);
     
 //    fd->set("minDistance", 0.5);
     fd->set("qualityLevel", 0.04);
@@ -124,8 +124,8 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     vector<vector< DMatch >> matches2;
     matcher.knnMatch(descriptors1, descriptors2, matches1, 2);
     matcher.knnMatch(descriptors2, descriptors1, matches2, 2);
-    printf("%d matches found ROI -> IMG\n", (int)matches1.size());
-    printf("%d matches found IMG -> ROI\n", (int)matches2.size());
+//    printf("%d matches found ROI -> IMG\n", (int)matches1.size());
+//    printf("%d matches found IMG -> ROI\n", (int)matches2.size());
     
     // Calculation of max and min distances between keypoints
     double max_dist = 0; double min_dist = 100;
@@ -170,7 +170,7 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
             good_matches.clear();
         }
     }
-    printf("%d good matches found\n", (int)good_matches.size());
+//    printf("%d good matches found\n", (int)good_matches.size());
     
     // For debug, remove from final animation
     Mat img_matches;
@@ -196,20 +196,6 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     
     perspectiveTransform( obj_corners, scene_corners, H);
     
-    
-    //-- Draw lines between the corners (the mapped object in the scene - image_2 )
-    Point2f offset( (float)roi.cols, 0);
-    line( img_matches, scene_corners[0] + offset, scene_corners[1] + offset, Scalar(0, 255, 0), 4 );
-    line( img_matches, scene_corners[1] + offset, scene_corners[2] + offset, Scalar( 0, 255, 0), 4 );
-    line( img_matches, scene_corners[2] + offset, scene_corners[3] + offset, Scalar( 0, 255, 0), 4 );
-    line( img_matches, scene_corners[3] + offset, scene_corners[0] + offset, Scalar( 0, 255, 0), 4 );
-    
-    
-    // Display
-//    imshow( "Good Matches", img_matches );
-    
-//    waitKey(0);
-    
     Mat of = Mat::eye(3,3, CV_64F);
     of.at<double>(0,2) = -x1;
     of.at<double>(1,2) = -y1;
@@ -217,16 +203,5 @@ void ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     H *= of;
     
     warpPerspective(images[ind].matrix, images[ind].matrix, H, images[ind].matrix.size(), WARP_INVERSE_MAP);
-    string fp;
-    dp += "frames/Frame_";
-    
-    if (ind < 10) {
-        fp = dp + to_string(0) + to_string(ind);
-    } else {
-        fp = dp + to_string(ind);
-    }
-    fp += ".jpg";
-    imwrite(fp.c_str(), images[ind].matrix);
-//    imshow("Good Matches", images[ind]);
-//    waitKey(0);
+
 }

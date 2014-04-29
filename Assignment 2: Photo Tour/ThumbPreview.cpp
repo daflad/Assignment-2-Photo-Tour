@@ -41,7 +41,7 @@ void MouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
             tp->scratched.clear();
             tp->arrangeThumbnails(imgs);
         }
-        tp->displayThumbnails(true);
+        tp->displayThumbnails();
     }
 }
 
@@ -147,13 +147,8 @@ int ThumbPreview::hitOrMiss(int x, int y) {
 // display and wait for key press
 //
 //----------------------------------------------------------------------------------------------
-void ThumbPreview::displayThumbnails(bool loading) {
+void ThumbPreview::displayThumbnails() {
     imshow("Thumbnail", combined);
-    if (!loading) {
-        waitKey(30);
-    } else {
-        waitKey();
-    }
 }
 
 //----------------------------------------------------------------------------------------------

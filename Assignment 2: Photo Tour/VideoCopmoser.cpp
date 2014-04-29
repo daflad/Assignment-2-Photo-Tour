@@ -37,3 +37,22 @@ bool VideoCopmoser::writeSequence(vector<Image> images, vector<int> chosen) {
     
     return true;
 }
+
+bool VideoCopmoser::writeImages(vector<Image> images, vector<int> chosen, string dp) {
+
+    dp = "frame_";
+    
+    for (int i = 0; i < chosen.size(); i++) {
+        string fp;
+        if (i < 10) {
+            fp = dp + to_string(0) + to_string(i);
+        } else {
+            fp = dp + to_string(i);
+        }
+        fp += ".jpg";
+        cout << fp << endl;
+        imwrite(fp.c_str(), images[chosen[i]].matrix);
+        waitKey(30);
+    }
+    return true;
+}

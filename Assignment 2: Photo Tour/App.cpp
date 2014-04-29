@@ -9,7 +9,10 @@
 #include "App.h"
 
 void App::init(int argc, const char **argv) {
-
+    alligned = false;
+    exit = false;
+    writeIMG = false;
+    writeVID = false;
     roi.init();
     
     if (fu.checkArgs(argc, argv, &roi)) {
@@ -22,34 +25,83 @@ void App::init(int argc, const char **argv) {
 
 
 int App::run() {
-    tp.arrangeThumbnails(dataSet);
-    tp.displayThumbnails(true);
     
-    for (int i = 0; i < dataSet.size(); i++) {
+    while (!exit) {
+
+        tp.arrangeThumbnails(dataSet);
+        tp.displayThumbnails();
+
+        if (!alligned) {
+            allign();    
+        }
         
+        int wk = waitKey();
+        keyCheck(wk);
+
+        vector<int> chosen;
+        
+        for (int i = 0; i < dataSet.size(); i++) {
+            bool hit = false;
+            for (int j = 0; j < tp.scratched.size(); j++) {
+                if (tp.scratched[j] == i) {
+                    hit = true;
+                }
+            }
+            if (!hit) {
+                chosen.push_back(i);
+            }
+        }
+
+        if (writeVID) {
+            cout << "writing video" << endl;
+            writeVideo(chosen);
+            writeVID = false;
+        }
+        
+        if (writeIMG) {
+            cout << "writing images" << endl;
+            writeImages(chosen);
+            writeIMG = false;
+        }
+
+    }
+    
+    return 0;
+}
+
+void App::keyCheck(int wk) {
+    
+    cout << "Key " << wk << endl;
+    
+    if (wk == 27) {
+        exit = true;
+    } else if (wk == 105) {
+        writeIMG = true;
+    } else if (wk == 97) {
+        writeVID = true;
+    }
+}
+
+void App::writeVideo(vector<int> chosen) {
+    vc.writeSequence(dataSet, chosen);
+}
+
+void App::writeImages(vector<int> chosen) {
+    vc.writeImages(dataSet, chosen, fu.dirpath);
+}
+
+void App::allign() {
+
+    for (int i = 0; i < dataSet.size(); i++) {
+
         ia.detectFeaturePoints(i, dataSet, roi.image);
         ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image);
         tp.arrangeThumbnails(dataSet);
-        tp.displayThumbnails(false);
+        tp.displayThumbnails();
+        waitKey(30);
     }
-    tp.displayThumbnails(true);
-    
-    vector<int> chosen;
-    
-    for (int i = 0; i < dataSet.size(); i++) {
-        bool hit = false;
-        for (int j = 0; j < tp.scratched.size(); j++) {
-            if (tp.scratched[j] == i) {
-                hit = true;
-            }
-        }
-        if (!hit) {
-            chosen.push_back(i);
-        }
-    }
-    
-    vc.writeSequence(dataSet, chosen);
-    
-    return 0;
 
+    tp.displayThumbnails();
+    
+    alligned = true;
 }
