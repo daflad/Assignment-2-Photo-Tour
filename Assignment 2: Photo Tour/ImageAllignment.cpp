@@ -68,16 +68,16 @@ void ImageAllignment::init() {
 // Detect feature points in the ROI of the first image and everywhere in the second image.
 //
 //----------------------------------------------------------------------------------------------
-void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat roi) {
+void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat roi, float ql) {
     
     Ptr<FeatureDetector> fd = FeatureDetector::create("GFTT");
     roikp.clear();
     imgkp.clear();
     //    printParams(fd);
     
-    fd->set("qualityLevel", 0.019);
+    fd->set("qualityLevel", ql);
     fd->set("useHarrisDetector", true);
-    fd->set("k", 0.08);
+    fd->set("k", 0.05);
     
     fd->detect(roi, roikp);
     //
@@ -105,15 +105,15 @@ void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat r
 //       Make interface for user to chose algorithm at run time
 //
 //----------------------------------------------------------------------------------------------
-bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vector<Image> &images,  Mat roi, float accuracy) {
+bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vector<Image> &images,  Mat roi, float accuracy, int nM) {
     
     Ptr<DescriptorExtractor> de = DescriptorExtractor::create("SIFT");
     
 //    printParams(de);
     
-    de->set("contrastThreshold", 20.5);
-    de->set("edgeThreshold", 10.9);
-    de->set("sigma", 0.5);
+    de->set("contrastThreshold", 1);
+    de->set("edgeThreshold", 6);
+    de->set("sigma", 0.05);
     
     // Compute descriptors
     Mat descriptors1, descriptors2;
@@ -164,7 +164,7 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
             }
         }
         numMatch = (int)good_matches.size();
-        if (numMatch > 6) {
+        if (numMatch > nM) {
             enoughMatches = true;
         } else {
             mult += inc;
@@ -191,8 +191,10 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     
     //-- Get the corners from the image_1 ( the object to be "detected" )
     std::vector<Point2f> obj_corners(4);
-    obj_corners[0] = Point(0,0); obj_corners[1] = Point( roi.cols, 0 );
-    obj_corners[2] = Point( roi.cols, roi.rows ); obj_corners[3] = Point( 0, roi.rows );
+    obj_corners[0] = Point(0,0);
+    obj_corners[1] = Point( roi.cols, 0 );
+    obj_corners[2] = Point( roi.cols, roi.rows );
+    obj_corners[3] = Point( 0, roi.rows );
     std::vector<Point2f> scene_corners(4);
     
     perspectiveTransform( obj_corners, scene_corners, H);
@@ -224,6 +226,7 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
                 images[ind].roi.image = images[ind].getRoi(roi_co);
                 images[ind].roi.x1 = roi_co[0];
                 images[ind].roi.y1 = roi_co[1];
+                images[ind].isWarped = true;
                 warpPerspective(images[ind].matrix, images[ind].matrix, H, images[ind].matrix.size(), WARP_INVERSE_MAP);
             }
         }

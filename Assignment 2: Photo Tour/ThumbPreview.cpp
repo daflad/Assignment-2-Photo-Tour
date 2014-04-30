@@ -61,7 +61,7 @@ void ThumbPreview::init(vector<Image> &img, string dp) {
     number_in_row   = 5;
     spacing         = 20;
     width           = 1200;
-    height          = 900;
+    height          = 700;
     dir_path        = dp;
     MATRIX_TYPE     = img[0].matrix.type();
     

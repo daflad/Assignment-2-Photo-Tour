@@ -28,6 +28,9 @@ public:
     
     /// Has ROI been found
     bool    newROI;
+
+    /// Has been wrped
+    bool    isWarped;
     
     // Resolution of full matrix
     //

@@ -36,9 +36,9 @@ public:
     
     void init();
     
-    void detectFeaturePoints(int, vector<Image> &images,  Mat roi);
+    void detectFeaturePoints(int, vector<Image> &images,  Mat roi, float ql);
     
-    bool extractDescriptors(int, int, int, string, vector<Image> &images,  Mat roi, float accuracy);
+    bool extractDescriptors(int, int, int, string, vector<Image> &images,  Mat roi, float accuracy, int nM);
     
     void pruneResults();
 };
