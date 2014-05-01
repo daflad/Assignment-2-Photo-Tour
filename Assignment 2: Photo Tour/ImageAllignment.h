@@ -38,9 +38,22 @@ public:
     
     void detectFeaturePoints(int, vector<Image> &images,  Mat roi, float ql);
     
-    bool extractDescriptors(int, int, int, string, vector<Image> &images,  Mat roi, float accuracy, int nM);
+    bool extractDescriptors(int, int, int, string, vector<Image> &images,  Mat roi, float accuracy, int nM, float sig);
     
     void pruneResults();
+    
+    
+//1. Detect feature points in the ROI of the first image and everywhere in the second image.
+//2. Extract a descriptor for each feature point.
+//3. Find the best matches between feature points in both images.
+//4. (optionally) Prune the matches with one or both of the suggested methods (Sections 2.5 and 2.6).
+//5. Use the RANSAC algorithm to find a homography (projective transform) mapping ROI from one image
+//   to another. Optionally, you can use your own RANSAC restricted to similarity transformations to
+//   improve the results (Section 2.9)
+//6. Use the number of inliners returned by the RANSAC algorithm as the measure of the quality of the
+//   match. If there are too few inliners, the match is probably incorrect and needs to be ignored.
+//   You can automatically exclude such images from the results.
+
 };
 
 #endif /* defined(__Assignment_2__Photo_Tour__ImageAllignment__) */

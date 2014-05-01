@@ -90,21 +90,26 @@ void App::writeImages(vector<int> chosen) {
     vc.writeImages(dataSet, chosen, fu.dirpath);
 }
 
-void App::lookForNew() {
-
-    cout << "looking" << endl;
-    for (int i = 0; i < dataSet.size(); i++) {
-        if (dataSet[i].newROI) {
-            for (int j = 0; j < dataSet.size(); j++) {
-                if (!dataSet[j].newROI && j != i && !dataSet[j].isWarped) {
-                    ia.detectFeaturePoints(j, dataSet, dataSet[i].roi.image, 0.09);
-                    if (ia.extractDescriptors(j, dataSet[i].roi.x1, dataSet[i].roi.y1, fu.dirpath, dataSet, dataSet[i].roi.image, 0.99, 4)) {
-                        tp.arrangeThumbnails(dataSet);
-                        tp.displayThumbnails();
-                        waitKey(30);
-                        lookForNew();
+void App::lookForNew(int ind, bool once) {
+    cout << "looking " << ind << endl;
+    for (int j = 1; j < dataSet.size(); j++) {
+        if (!dataSet[j].isWarped && !dataSet[j].failed && j != ind) {
+            try {
+                ia.detectFeaturePoints(j, dataSet, dataSet[ind].roi.image, 0.025);
+                if (ia.extractDescriptors(j, dataSet[ind].roi.x1, dataSet[ind].roi.y1, fu.dirpath, dataSet, dataSet[ind].roi.image, 0.9, 3, 0.001)) {
+                    tp.arrangeThumbnails(dataSet);
+                    tp.displayThumbnails();
+                    waitKey(30);
+                    if (j > ind && once) {
+                        lookForNew(j, true);
+                    } else {
+                        lookForNew(j, false);
                     }
                 }
+            } catch( cv::Exception& e ) {
+                dataSet[j].failed = true;
+//                const char* err_msg = e.what();
+//                std::cout << "exception caught: " << err_msg << std::endl;
             }
         }
     }
@@ -114,14 +119,18 @@ void App::allign() {
 
     
     for (int i = 0; i < dataSet.size(); i++) {
-        
-        ia.detectFeaturePoints(i, dataSet, roi.image, 0.04);
-        ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image, 0.8, 4);
+        ia.detectFeaturePoints(i, dataSet, roi.image, 0.0025);
+        ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image, 0.67, 5, 0.01);
         tp.arrangeThumbnails(dataSet);
         tp.displayThumbnails();
         waitKey(30);
     }
-    lookForNew();
+    
+    for (int i = 1; i < dataSet.size(); i++) {
+        if (dataSet[i].isWarped && !dataSet[i].failed) {
+            lookForNew(i, true);
+        }
+    }
     tp.displayThumbnails();
     cout << "All Alligned!" << endl;
     alligned = true;

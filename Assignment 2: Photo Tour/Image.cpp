@@ -22,6 +22,7 @@ void Image::init(string fp, string dp, int w, int h) {
     matrix.copyTo(thumbnail);
     newROI      = false;
     isWarped    = false;
+    failed      = false;
 }
 
 //----------------------------------------------------------------------------------------------

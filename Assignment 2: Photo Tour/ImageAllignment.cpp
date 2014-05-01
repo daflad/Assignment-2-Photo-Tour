@@ -105,15 +105,15 @@ void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat r
 //       Make interface for user to chose algorithm at run time
 //
 //----------------------------------------------------------------------------------------------
-bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vector<Image> &images,  Mat roi, float accuracy, int nM) {
+bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vector<Image> &images,  Mat roi, float accuracy, int nM, float sig) {
     
     Ptr<DescriptorExtractor> de = DescriptorExtractor::create("SIFT");
     
 //    printParams(de);
     
-    de->set("contrastThreshold", 10);
-    de->set("edgeThreshold", 10);
-    de->set("sigma", 0.2);
+//    de->set("contrastThreshold", 100);
+//    de->set("edgeThreshold", 100);
+    de->set("sigma", sig);
     
     // Compute descriptors
     Mat descriptors1, descriptors2;
@@ -126,8 +126,8 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     vector<vector< DMatch >> matches2;
     matcher.knnMatch(descriptors1, descriptors2, matches1, 2);
     matcher.knnMatch(descriptors2, descriptors1, matches2, 2);
-    //    printf("%d matches found ROI -> IMG\n", (int)matches1.size());
-    //    printf("%d matches found IMG -> ROI\n", (int)matches2.size());
+    printf("%d matches found ROI -> IMG\n", (int)matches1.size());
+    printf("%d matches found IMG -> ROI\n", (int)matches2.size());
     
     // Calculation of max and min distances between keypoints
     double max_dist = 0; double min_dist = 100;
@@ -146,7 +146,7 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     // Debug
     //    printf("-- Max dist : %f \n", max_dist );
     //    printf("-- Min dist : %f \n", min_dist );
-    vector<vector< DMatch >> symMatch;
+//    vector<vector< DMatch >> symMatch;
     std::vector< DMatch > good_matches;
     bool enoughMatches = false;
     int numMatch;
@@ -164,14 +164,14 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
             }
         }
         numMatch = (int)good_matches.size();
-        if (numMatch > nM) {
+        if (numMatch >= nM) {
             enoughMatches = true;
         } else {
             mult += inc;
             good_matches.clear();
         }
     }
-    //    printf("%d good matches found\n", (int)good_matches.size());
+    printf("%d good matches found\n", (int)good_matches.size());
     
     // For debug, remove from final animation
     Mat img_matches;

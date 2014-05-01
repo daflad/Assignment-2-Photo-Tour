@@ -32,6 +32,7 @@ public:
     /// Has been wrped
     bool    isWarped;
     
+    bool    failed;
     // Resolution of full matrix
     //
     /// NOTE ABOUT WIDTH & HEIGHT
