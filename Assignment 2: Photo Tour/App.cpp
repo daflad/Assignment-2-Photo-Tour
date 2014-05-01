@@ -97,8 +97,8 @@ void App::lookForNew() {
         if (dataSet[i].newROI) {
             for (int j = 0; j < dataSet.size(); j++) {
                 if (!dataSet[j].newROI && j != i && !dataSet[j].isWarped) {
-                    ia.detectFeaturePoints(j, dataSet, dataSet[i].roi.image, 0.02);
-                    if (ia.extractDescriptors(j, dataSet[i].roi.x1, dataSet[i].roi.y1, fu.dirpath, dataSet, dataSet[i].roi.image, 0.85, 6)) {
+                    ia.detectFeaturePoints(j, dataSet, dataSet[i].roi.image, 0.09);
+                    if (ia.extractDescriptors(j, dataSet[i].roi.x1, dataSet[i].roi.y1, fu.dirpath, dataSet, dataSet[i].roi.image, 0.99, 4)) {
                         tp.arrangeThumbnails(dataSet);
                         tp.displayThumbnails();
                         waitKey(30);
@@ -115,8 +115,8 @@ void App::allign() {
     
     for (int i = 0; i < dataSet.size(); i++) {
         
-        ia.detectFeaturePoints(i, dataSet, roi.image, 0.02);
-        ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image, 0.85, 4);
+        ia.detectFeaturePoints(i, dataSet, roi.image, 0.04);
+        ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image, 0.8, 4);
         tp.arrangeThumbnails(dataSet);
         tp.displayThumbnails();
         waitKey(30);

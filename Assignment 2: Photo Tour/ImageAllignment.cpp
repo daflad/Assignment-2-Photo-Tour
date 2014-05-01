@@ -111,9 +111,9 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     
 //    printParams(de);
     
-    de->set("contrastThreshold", 1);
-    de->set("edgeThreshold", 6);
-    de->set("sigma", 0.05);
+    de->set("contrastThreshold", 10);
+    de->set("edgeThreshold", 10);
+    de->set("sigma", 0.2);
     
     // Compute descriptors
     Mat descriptors1, descriptors2;
