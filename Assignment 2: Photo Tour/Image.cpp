@@ -19,10 +19,13 @@ void Image::init(string fp, string dp, int w, int h) {
     width       = w;
     height      = h;
     matrix      = loadImage();
+    orig        = loadImage();
     matrix.copyTo(thumbnail);
     newROI      = false;
     isWarped    = false;
     failed      = false;
+    warpAcc     = 0;
+    warpInd     = 0;
 }
 
 //----------------------------------------------------------------------------------------------

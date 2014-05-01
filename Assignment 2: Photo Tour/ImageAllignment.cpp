@@ -68,7 +68,7 @@ void ImageAllignment::init() {
 // Detect feature points in the ROI of the first image and everywhere in the second image.
 //
 //----------------------------------------------------------------------------------------------
-void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat roi, float ql) {
+void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat roi, float ql, float k) {
     
     Ptr<FeatureDetector> fd = FeatureDetector::create("GFTT");
     roikp.clear();
@@ -77,14 +77,14 @@ void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat r
     
     fd->set("qualityLevel", ql);
     fd->set("useHarrisDetector", true);
-    fd->set("k", 0.05);
+    fd->set("k", k);
     
     fd->detect(roi, roikp);
     //
     //    drawKeypoints(roi, roikp, roi, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
     //
     Mat temp;
-    cvtColor(images[ind].matrix, temp, CV_BGR2GRAY);
+    cvtColor(images[ind].orig, temp, CV_BGR2GRAY);
     fd->detect(temp , imgkp);
     
     //    drawKeypoints(images[ind], imgkp, images[ind], Scalar::all(-1), DrawMatchesFlags::DEFAULT);
@@ -105,7 +105,7 @@ void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat r
 //       Make interface for user to chose algorithm at run time
 //
 //----------------------------------------------------------------------------------------------
-bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vector<Image> &images,  Mat roi, float accuracy, int nM, float sig) {
+bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vector<Image> &images,  Mat roi, float accuracy, int nM, float sig, int roiInd) {
     
     Ptr<DescriptorExtractor> de = DescriptorExtractor::create("SIFT");
     
@@ -150,7 +150,7 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     std::vector< DMatch > good_matches;
     bool enoughMatches = false;
     int numMatch;
-    double inc = diff / 10;
+    double inc = diff / 100;
     double mult = min_dist + inc;
     while (!enoughMatches) {
         good_matches.clear();
@@ -167,6 +167,9 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
         if (numMatch >= nM) {
             enoughMatches = true;
         } else {
+            if (mult >= diff) {
+                enoughMatches = true; 
+            }
             mult += inc;
             good_matches.clear();
         }
@@ -199,18 +202,22 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     
     perspectiveTransform( obj_corners, scene_corners, H);
     
+    Mat H2 = getPerspectiveTransform(scene_corners, obj_corners);
     Mat of = Mat::eye(3,3, CV_64F);
     of.at<double>(0,2) = -x1;
     of.at<double>(1,2) = -y1;
-    
     H *= of;
+    of.at<double>(0,2) = x1;
+    of.at<double>(1,2) = y1;
+    of *= H2;
+    H2 = of;
     int numInliers = 0;
     for (int i = 0; i < mask.size(); i++) {
         if ((int)mask[i] == 1) {
             numInliers++;
         }
     }
-    if ((float)numInliers > (float)mask.size()*accuracy) {
+    if ((float)numInliers > (float)mask.size()*accuracy && ((float)numInliers / mask.size()) > images[ind].warpAcc) {
         if (scene_corners[0].x > 0 && scene_corners[0].y > 0
             && scene_corners[2].x > 0 && scene_corners[2].y > 0) {
             if (scene_corners[0].x < images[ind].matrix.cols
@@ -227,7 +234,10 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
                 images[ind].roi.x1 = roi_co[0];
                 images[ind].roi.y1 = roi_co[1];
                 images[ind].isWarped = true;
-                warpPerspective(images[ind].matrix, images[ind].matrix, H, images[ind].matrix.size(), WARP_INVERSE_MAP);
+                images[ind].trans = H;
+                images[ind].warpAcc = ((float)numInliers / mask.size());
+                images[ind].warpInd = roiInd;
+                warpPerspective(images[ind].orig, images[ind].matrix, H, images[ind].matrix.size(), 1);
             }
         }
     }

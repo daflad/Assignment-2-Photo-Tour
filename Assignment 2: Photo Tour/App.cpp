@@ -90,13 +90,17 @@ void App::writeImages(vector<int> chosen) {
     vc.writeImages(dataSet, chosen, fu.dirpath);
 }
 
-void App::lookForNew(int ind, bool once) {
+bool App::lookForNew(int ind, bool once) {
+    bool lessThan = false;
     cout << "looking " << ind << endl;
     for (int j = 1; j < dataSet.size(); j++) {
         if (!dataSet[j].isWarped && !dataSet[j].failed && j != ind) {
             try {
-                ia.detectFeaturePoints(j, dataSet, dataSet[ind].roi.image, 0.025);
-                if (ia.extractDescriptors(j, dataSet[ind].roi.x1, dataSet[ind].roi.y1, fu.dirpath, dataSet, dataSet[ind].roi.image, 0.9, 3, 0.001)) {
+                ia.detectFeaturePoints(j, dataSet, dataSet[ind].roi.image, 0.0025, 0.05);
+                if (ia.extractDescriptors(j, dataSet[ind].roi.x1, dataSet[ind].roi.y1, fu.dirpath, dataSet, dataSet[ind].roi.image, 0.7, 16, 0.01, ind)) {
+                    if (j < ind) {
+                        lessThan = true;
+                    }
                     tp.arrangeThumbnails(dataSet);
                     tp.displayThumbnails();
                     waitKey(30);
@@ -113,24 +117,41 @@ void App::lookForNew(int ind, bool once) {
             }
         }
     }
+    return lessThan;
+}
+
+void App::looking() {
+    for (int i = 1; i < dataSet.size(); i++) {
+        if (dataSet[i].isWarped && !dataSet[i].failed) {
+            if (lookForNew(i, true)) {
+                looking();
+            }
+        }
+    }
 }
 
 void App::allign() {
 
     
     for (int i = 0; i < dataSet.size(); i++) {
-        ia.detectFeaturePoints(i, dataSet, roi.image, 0.0025);
-        ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image, 0.67, 5, 0.01);
-        tp.arrangeThumbnails(dataSet);
-        tp.displayThumbnails();
-        waitKey(30);
-    }
-    
-    for (int i = 1; i < dataSet.size(); i++) {
-        if (dataSet[i].isWarped && !dataSet[i].failed) {
-            lookForNew(i, true);
+        ia.detectFeaturePoints(i, dataSet, roi.image, 0.0025, 0.05);
+        if (ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image, 0.7, 9, 0.01, 0)) {
+            tp.arrangeThumbnails(dataSet);
+            tp.displayThumbnails();
+            waitKey(30);
         }
     }
+    
+    looking();
+    
+//    for (int i = 1; i < dataSet.size(); i++) {
+//        ia.detectFeaturePoints(dataSet[i].warpInd, dataSet, roi.image, 0.0025, 0.1);
+//        if (ia.extractDescriptors(dataSet[i].warpInd, dataSet[dataSet[i].warpInd].roi.x1, dataSet[dataSet[i].warpInd].roi.y1, fu.dirpath, dataSet, roi.image, 0.67, 30, 0.01, dataSet[i].warpInd)) {
+//            tp.arrangeThumbnails(dataSet);
+//            tp.displayThumbnails();
+//            waitKey(30);
+//        }
+//    }
     tp.displayThumbnails();
     cout << "All Alligned!" << endl;
     alligned = true;

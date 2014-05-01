@@ -44,12 +44,16 @@ public:
 
     /// Full resolution version of image
     Mat     matrix;
+    Mat     orig;
     
     /// The ROI of the image
     ROI     roi;
     
     /// Low resolution version of image
     Mat     thumbnail;
+
+    /// Transformation matrix
+    Mat     trans;
     
     /// Init the image with it's file path & load Image
     void    init(string filePath, string dP, int width, int height);
@@ -64,6 +68,9 @@ public:
     void    resizeImage(float width, float height);
     
     void    updateThumb();
+    
+    int     warpInd;
+    float   warpAcc;
 private:
     /// file path not included as required for init.
     Mat     loadImage();

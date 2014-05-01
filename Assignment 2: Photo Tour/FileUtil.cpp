@@ -143,7 +143,8 @@ bool FileUtil::getFilePaths(const char * argv[]) {
         while ((ent = readdir (dir)) != NULL) {
             string name = ent->d_name;
             string ft = ".jpg";
-            if (name.find(ft) != string::npos) {
+            string FT = ".JPG";
+            if (name.find(ft) != string::npos || name.find(FT) != string::npos) {
                 filepaths.push_back(ent->d_name);
                 c++;
             }

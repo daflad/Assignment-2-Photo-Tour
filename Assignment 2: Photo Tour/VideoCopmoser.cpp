@@ -23,14 +23,31 @@ bool VideoCopmoser::writeSequence(vector<Image> images, vector<int> chosen) {
     float alpha = 0;
     
     
+    
     for (int i = 1; i < chosen.size(); i++) {
-        output = images[chosen[i-1]].matrix;
+        images[chosen[i-1]].matrix.copyTo(output);
         for (int j = 0; j < NUM_FRAMES; j++) {
             addWeighted( images[chosen[i]].matrix, alpha, images[chosen[i - 1]].matrix, 1 - alpha, 0.0, output);
             alpha += aInc;
             outputVideo.write(output);
         }
+        alpha = 0.0f;
+        Mat tr;
+        Mat ey = Mat::eye(3, 3, images[chosen[i]].trans.type());
+        for (int j = 0; j < NUM_FRAMES; j++) {
+            addWeighted( images[chosen[i]].trans, 1 - alpha, ey, alpha, 0.0, tr);
+            warpPerspective(images[chosen[i]].orig, output, tr, images[chosen[i]].matrix.size(), 1);
+            outputVideo.write(output);
+            alpha += aInc;
+        }
         alpha = 0;
+//        for (int j = 0; j < NUM_FRAMES; j++) {
+//            addWeighted( images[chosen[i]].trans, alpha, ey, 1 - alpha, 0.0, tr);
+//            warpPerspective(images[chosen[i]].orig, output, tr, images[chosen[i]].matrix.size(), 1);
+//            outputVideo.write(output);
+//            alpha += aInc;
+//        }
+//        alpha = 0;
     }
     
     outputVideo.release();

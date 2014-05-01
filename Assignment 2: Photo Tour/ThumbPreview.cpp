@@ -162,7 +162,7 @@ void ThumbPreview::arrangeThumbnails(vector<Image> &img) {
     // Reset large image to remove border from scratch
     combined = Mat::zeros(Size(width,height), MATRIX_TYPE);
     coords.clear();
-    // The spacing for imagesΩ
+    // The spacing for images
     int xc = spacing;
     int yc = spacing;
     // The current row being added to
@@ -174,7 +174,9 @@ void ThumbPreview::arrangeThumbnails(vector<Image> &img) {
         img[i].updateThumb();
         resize(img[i].thumbnail, img[i].thumbnail, Size(scaledWidth, scaledHeight));
         Mat t = img[i].thumbnail;
-        t.copyTo(combined(Rect(Point(xc, yc),Point(xc + t.cols, yc + t.rows))));
+//        if (img[i].isWarped) {
+            t.copyTo(combined(Rect(Point(xc, yc),Point(xc + t.cols, yc + t.rows))));
+//        }
         coords.push_back(Point(xc, yc));
         if (row_tracker < number_in_row - 1) {
             xc += (t.cols + spacing);
@@ -219,9 +221,49 @@ void ThumbPreview::scratchThumbnail(vector<Image> &img) {
     
 }
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+// setImage
+//
+//----------------------------------------------------------------------------------------------
+void ThumbPreview::setImage(int index, Mat *matrix, vector<Image> &img) {
+    Image temp;
+    Image temp2;
+    temp.init("", "", 0, 0);
+    temp.matrix = *matrix;
+    temp.updateThumb();
+    temp2 = img[index];
+    img[index] = temp;
+    img.push_back(temp2);
+}
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+// setSelection
+//
+//----------------------------------------------------------------------------------------------
+void ThumbPreview::setSelection(int index, bool sel) {
+    if (sel) {
+        scratched.push_back(index);
+    } else {
+        scratched.erase(scratched.begin() + index);
+    }
+}
 
-
-
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+// getSelection
+//
+//----------------------------------------------------------------------------------------------
+bool ThumbPreview::getSelection(int index) {
+    bool in = false;
+    for (int i = 0; i < scratched.size(); i++) {
+        if (scratched[i] == index) {
+            in = true;
+            break;
+        }
+    }
+    return in;
+}
 
 

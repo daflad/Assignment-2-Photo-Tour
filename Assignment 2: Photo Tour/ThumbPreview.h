@@ -67,13 +67,13 @@ public:
     void            scratchThumbnail(vector<Image> &img);
     
     // Allocate an image to a give screen location (for ordering video)
-    void            setImage(int, Mat*);
+    void            setImage(int, Mat*, vector<Image>&);
     
     // retieve the clicked image
-    void            getSelection(int);
+    bool            getSelection(int);
     
     // assign a selected image
-    void            setSelection(int);
+    void            setSelection(int, bool);
     
 };
 
