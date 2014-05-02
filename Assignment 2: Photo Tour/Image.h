@@ -56,7 +56,7 @@ public:
     Mat     trans;
     
     /// Init the image with it's file path & load Image
-    void    init(string filePath, string dP, int width, int height);
+    void    init(string filePath, string dP, int width, int height, int ind);
     
     // Helpers to set class images
     
@@ -71,6 +71,7 @@ public:
     
     int     warpInd;
     float   warpAcc;
+    int     index;
 private:
     /// file path not included as required for init.
     Mat     loadImage();

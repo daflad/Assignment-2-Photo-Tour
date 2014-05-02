@@ -25,7 +25,7 @@ void MouseCallBackFunc(int event, int x, int y, int flags, void* userdata) {
     
     // Retieve the class object as this function is not part of the class
     ThumbPreview* tp = static_cast<ThumbPreview*>( userdata );
-    
+
     // ******************************************************************** //
     // FOR NOW, CLICKING OUTSIDE AN IMAGE WILL CLEAR THE SCRATCHED ARRAY.   //
     // THIS IS TOO FIDLEY FOR THE FINAL PROGRAM, BETTER TO PROVIDE A BUTTON //
@@ -64,7 +64,7 @@ void ThumbPreview::init(vector<Image> &img, string dp) {
     height          = 700;
     dir_path        = dp;
     MATRIX_TYPE     = img[0].matrix.type();
-    
+    showUnwarped    = false;
     combined        = Mat::zeros(Size(width,height), MATRIX_TYPE);
     
     
@@ -95,7 +95,7 @@ void ThumbPreview::init(vector<Image> &img, string dp) {
     
     xOff = scaledWidth / 2;
     yOff = scaledHeight / 2;
-    cout << "x :: " << xOff << " y :: " << yOff << endl;
+//    cout << "x :: " << xOff << " y :: " << yOff << endl;
     // Resize each image to the correct size.
     for (int i = 0; i < img.size(); i++) {
         resize(img[i].thumbnail, img[i].thumbnail, Size(scaledWidth, scaledHeight));
@@ -174,9 +174,9 @@ void ThumbPreview::arrangeThumbnails(vector<Image> &img) {
         img[i].updateThumb();
         resize(img[i].thumbnail, img[i].thumbnail, Size(scaledWidth, scaledHeight));
         Mat t = img[i].thumbnail;
-//        if (img[i].isWarped) {
+        if (img[i].isWarped || showUnwarped) {
             t.copyTo(combined(Rect(Point(xc, yc),Point(xc + t.cols, yc + t.rows))));
-//        }
+        }
         coords.push_back(Point(xc, yc));
         if (row_tracker < number_in_row - 1) {
             xc += (t.cols + spacing);
@@ -229,7 +229,7 @@ void ThumbPreview::scratchThumbnail(vector<Image> &img) {
 void ThumbPreview::setImage(int index, Mat *matrix, vector<Image> &img) {
     Image temp;
     Image temp2;
-    temp.init("", "", 0, 0);
+    temp.init("", "", 0, 0, index);
     temp.matrix = *matrix;
     temp.updateThumb();
     temp2 = img[index];

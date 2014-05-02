@@ -49,6 +49,7 @@ public:
     Mat             combined;
     int             MATRIX_TYPE;
     
+    bool            showUnwarped;
     
     void            init(vector<Image> &img, string);
     

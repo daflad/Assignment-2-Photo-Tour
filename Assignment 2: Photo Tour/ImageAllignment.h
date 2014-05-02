@@ -34,14 +34,24 @@ public:
     /// Key points for the current image to be comared
     vector<KeyPoint>    imgkp;
     
+    // Compute descriptors
+    Mat descriptors1, descriptors2;
+    // Find matches between descriptors
+    FlannBasedMatcher matcher;
+    vector<vector< DMatch >> matches1;
+    vector<vector< DMatch >> matches2;
+    vector< DMatch > good_matches;
     void init();
     
     void detectFeaturePoints(int, vector<Image> &images,  Mat roi, float ql, float k);
     
-    bool extractDescriptors(int, int, int, string, vector<Image> &images,  Mat roi, float accuracy, int nM, float sig, int roiInd);
+    void extractDescriptors(int, string, vector<Image> &images,  Mat roi, float accuracy, int nM, float sig, int roiInd);
     
-    void pruneResults();
+    void pruneResults(int nM);
     
+    bool ransac(int ind, vector<Image> &images, int x1, int y1, Mat roi, float accuracy, int roiInd);
+    
+    void storeInfo(vector<Image> &images, vector<Point2f> scene_corners, Mat H, int ind, int roiInd, int numInliers, vector<uchar> mask);
     
 //1. Detect feature points in the ROI of the first image and everywhere in the second image.
 //2. Extract a descriptor for each feature point.

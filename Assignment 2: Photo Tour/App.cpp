@@ -19,8 +19,6 @@ void App::init(int argc, const char **argv) {
         dataSet = fu.loadImages();
         tp.init(dataSet, fu.dirpath);
     }
-    
-    ia.init();
 }
 
 
@@ -47,14 +45,25 @@ int App::run() {
                     hit = true;
                 }
             }
-            if (!hit) {
+            if (!hit && dataSet[i].isWarped) {
                 chosen.push_back(i);
             }
         }
         
+        int c = 0;
+        vector<int> newChosen;
+        while (c < chosen.size()) {
+            for (int i = 0; i < chosen.size(); i++) {
+                if (dataSet[chosen[i]].warpInd == c) {
+                    newChosen.push_back(dataSet[chosen[i]].index);
+                }
+            }
+            c++;
+        }
+        
         if (writeVID) {
             cout << "writing video" << endl;
-            writeVideo(chosen);
+            writeVideo(newChosen);
             writeVID = false;
         }
         
@@ -71,7 +80,7 @@ int App::run() {
 
 void App::keyCheck(int wk) {
     
-    cout << "Key " << wk << endl;
+//    cout << "Key " << wk << endl;
     
     if (wk == 27) {
         exit = true;
@@ -79,6 +88,8 @@ void App::keyCheck(int wk) {
         writeIMG = true;
     } else if (wk == 97) {
         writeVID = true;
+    } else if (wk == 115) {
+        tp.showUnwarped = !tp.showUnwarped;
     }
 }
 
@@ -92,12 +103,14 @@ void App::writeImages(vector<int> chosen) {
 
 bool App::lookForNew(int ind, bool once) {
     bool lessThan = false;
-    cout << "looking " << ind << endl;
+//    cout << "looking " << ind << endl;
     for (int j = 1; j < dataSet.size(); j++) {
         if (!dataSet[j].isWarped && !dataSet[j].failed && j != ind) {
             try {
                 ia.detectFeaturePoints(j, dataSet, dataSet[ind].roi.image, 0.0025, 0.05);
-                if (ia.extractDescriptors(j, dataSet[ind].roi.x1, dataSet[ind].roi.y1, fu.dirpath, dataSet, dataSet[ind].roi.image, 0.7, 16, 0.01, ind)) {
+                ia.extractDescriptors(j, fu.dirpath, dataSet, dataSet[ind].roi.image, 0.7, 16, 0.01, ind);
+                ia.pruneResults(16);
+                if (ia.ransac(j, dataSet, dataSet[ind].roi.x1, dataSet[ind].roi.y1, dataSet[ind].roi.image, 0.7, ind)) {
                     if (j < ind) {
                         lessThan = true;
                     }
@@ -135,7 +148,9 @@ void App::allign() {
     
     for (int i = 0; i < dataSet.size(); i++) {
         ia.detectFeaturePoints(i, dataSet, roi.image, 0.0025, 0.05);
-        if (ia.extractDescriptors(i, roi.x1, roi.y1, fu.dirpath, dataSet, roi.image, 0.7, 9, 0.01, 0)) {
+        ia.extractDescriptors(i, fu.dirpath, dataSet, roi.image, 0.7, 9, 0.01, 0);
+        ia.pruneResults(9);
+        if (ia.ransac(i, dataSet, roi.x1, roi.y1, roi.image, 0.7, 0)) {
             tp.arrangeThumbnails(dataSet);
             tp.displayThumbnails();
             waitKey(30);
@@ -152,7 +167,31 @@ void App::allign() {
 //            waitKey(30);
 //        }
 //    }
+    tp.showUnwarped = true;
+    tp.arrangeThumbnails(dataSet);
     tp.displayThumbnails();
     cout << "All Alligned!" << endl;
     alligned = true;
 }
+
+void App::readMe() {
+    String msg;
+    msg += "Insructions\n";
+    msg += "***********\n\n";
+    msg += "1 ~ Select the ROI from the first window.\n";
+    msg += "2 ~ Wait for allignment to complete. (All images will be visible)\n";
+    msg += "3 ~ Select images to exclude from output.\n";
+    msg += "4 ~ Select an output (Video / Image Sequence.\n\n";
+    msg += "\tWhen selecting images, clicking the black space\n";
+    msg += "\tsurrounding the images will clear the selction\n\n";
+    
+    msg += "KEY\n";
+    msg += "***\n\n";
+    msg += "\tesc = exit\n";
+    msg += "\ta   = Output Video File\n";
+    msg += "\ti   = Output Image Sequence\n";
+    msg += "\ts   = Show/Hide Un-Warped Images (Can't use while selecting)\n";
+    
+    cout << msg << endl;
+}
+

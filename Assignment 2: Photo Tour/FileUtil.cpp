@@ -16,19 +16,6 @@
 // check useage and report problems
 //
 //----------------------------------------------------------------------------------------------
-
-void FileUtil::init() {
-
-}
-
-//----------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------
-//
-// Check arguments passed at runtime
-//
-// check useage and report problems
-//
-//----------------------------------------------------------------------------------------------
 bool FileUtil::checkArgs(int argc, const char * argv[], ROI *roi) {
     
     string arg = argv[1];
@@ -149,7 +136,7 @@ bool FileUtil::getFilePaths(const char * argv[]) {
                 c++;
             }
         }
-        printf ("Success :: %d jpg added to list\n", c);
+//        printf ("Success :: %d jpg added to list\n", c);
         closedir (dir);
         return true;
     } else {
@@ -160,11 +147,18 @@ bool FileUtil::getFilePaths(const char * argv[]) {
     
 }
 
+//----------------------------------------------------------------------------------------------
+//
+// loadImages
+//
+// Load all images from the file paths provided.
+//
+//----------------------------------------------------------------------------------------------
 vector<Image> FileUtil::loadImages() {
     vector<Image> imList;
     for (int i = 0; i < filepaths.size(); i++) {
         Image img;
-        img.init(filepaths[i], dirpath, 0, 0);
+        img.init(filepaths[i], dirpath, 0, 0, i);
         imList.push_back(img);
     }
     return imList;

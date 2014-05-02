@@ -79,11 +79,11 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/img_000.jpg&quot;"
+            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/photo_tour_data_sets/yeti_outdoor/img_001.jpg&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/yeti_outdoor/&quot;"
+            argument = "&quot;/Users/sjr/dev/Assignment 2: Photo Tour/Assignment 2: Photo Tour/photo_tour_data_sets/yeti_outdoor/&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

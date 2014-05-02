@@ -57,10 +57,9 @@ void ROI::mouseActions(int x, int y) {
         
         // mark selection in program & visually
         first = true;
-        printf("x1y1 :: %d, %d\n", x, y);
+
         circle(sourceImage, Point(x1-1,y1-1), 1, Scalar(155,250,150), -1, 8, 0 );
         imshow("ROI", sourceImage);
-        
         
         // Got first point
     } else if (!roi_captured && first) {
@@ -71,7 +70,7 @@ void ROI::mouseActions(int x, int y) {
         
         // mark selection in program & visually
         roi_captured = true;
-        printf("x2y2 :: %d, %d\n", x, y);
+        
         circle(sourceImage, Point(x2+1,y2+1), 1, Scalar(155,250,150), -1, 8, 0 );
         imshow("ROI", sourceImage);
         waitKey();
@@ -84,7 +83,6 @@ void ROI::mouseActions(int x, int y) {
         std::cout<<"ROI Captured, Click again to recapture \n"<<std::endl;
         first = false;
         roi_captured = false;
-        printf("RESET");
     }
 }
 
@@ -101,6 +99,9 @@ void ROI::getROI(string sI) {
     imshow("ROI", sourceImage);
     setMouseCallback("ROI", mousePressed, this);
     waitKey();
+    if (!roi_captured) {
+        getROI(sI);
+    }
 }
 
 //----------------------------------------------------------------------------------------------

@@ -13,19 +13,20 @@
 //
 //----------------------------------------------------------------------------------------------
 
-void Image::init(string fp, string dp, int w, int h) {
+void Image::init(string fp, string dp, int w, int h, int ind) {
     filePath    = fp;
     dirPath     = dp;
     width       = w;
     height      = h;
     matrix      = loadImage();
     orig        = loadImage();
-    matrix.copyTo(thumbnail);
+    thumbnail   = loadImage();
     newROI      = false;
     isWarped    = false;
     failed      = false;
     warpAcc     = 0;
     warpInd     = 0;
+    index       = ind;
 }
 
 //----------------------------------------------------------------------------------------------
@@ -44,18 +45,6 @@ Mat Image::loadImage() {
         dirPath += "/";
     }
     temp = imread(dirPath + filePath);
-//    if (temp.cols > 0) {
-//        
-//        // check dimentions
-//        if (width == 0 || height == 0) {
-//            width = 800;
-//            height = temp.rows * ((float)width / temp.cols);
-//        }
-//        // resize
-//        resize(temp, temp, Size(width, height));
-//    } else {
-//        cerr << "PANIC :: " << dirPath + filePath << endl;
-//    }
     return temp;
 }
 
@@ -89,6 +78,12 @@ Mat Image::getRoi(vector<float> roiCorners) {
     }
 }
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+// Get ROI
+//
+// Update thumbnail with latest transformation
+//----------------------------------------------------------------------------------------------
 void Image::updateThumb() {
     matrix.copyTo(thumbnail);
 }

@@ -7,59 +7,6 @@
 //
 
 #include "ImageAllignment.h"
-void printParams( cv::Algorithm* algorithm ) {
-    std::vector<std::string> parameters;
-    algorithm->getParams(parameters);
-    
-    for (int i = 0; i < (int) parameters.size(); i++) {
-        std::string param = parameters[i];
-        int type = algorithm->paramType(param);
-        std::string helpText = algorithm->paramHelp(param);
-        std::string typeText;
-        
-        switch (type) {
-            case cv::Param::BOOLEAN:
-                typeText = "bool";
-                break;
-            case cv::Param::INT:
-                typeText = "int";
-                break;
-            case cv::Param::REAL:
-                typeText = "real (double)";
-                break;
-            case cv::Param::STRING:
-                typeText = "string";
-                break;
-            case cv::Param::MAT:
-                typeText = "Mat";
-                break;
-            case cv::Param::ALGORITHM:
-                typeText = "Algorithm";
-                break;
-            case cv::Param::MAT_VECTOR:
-                typeText = "Mat vector";
-                break;
-        }
-        std::cout << "Parameter '" << param << "' type=" << typeText << " help=" << helpText << std::endl;
-    }
-}
-
-
-//----------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------
-// init
-//
-// Default values
-// Read each image into vector
-//
-//----------------------------------------------------------------------------------------------
-void ImageAllignment::init() {
-    
-    minHessian = 400;
-    
-}
-
-
 
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
@@ -70,28 +17,24 @@ void ImageAllignment::init() {
 //----------------------------------------------------------------------------------------------
 void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat roi, float ql, float k) {
     
+    // Select Feature detector & clear key point arrays
     Ptr<FeatureDetector> fd = FeatureDetector::create("GFTT");
     roikp.clear();
     imgkp.clear();
-    //    printParams(fd);
     
+    // Set params for GFTT
     fd->set("qualityLevel", ql);
     fd->set("useHarrisDetector", true);
     fd->set("k", k);
     
+    // Convert images to B&W
+    // Detect Key points in both directions
+    cvtColor(roi, roi, CV_BGR2GRAY);
     fd->detect(roi, roikp);
-    //
-    //    drawKeypoints(roi, roikp, roi, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
-    //
+    
     Mat temp;
     cvtColor(images[ind].orig, temp, CV_BGR2GRAY);
     fd->detect(temp , imgkp);
-    
-    //    drawKeypoints(images[ind], imgkp, images[ind], Scalar::all(-1), DrawMatchesFlags::DEFAULT);
-    //
-    //    imshow("ROI", roi);
-    //    namedWindow("NewFeats");
-    //    imshow("NewFeats", images[ind]);
     
 }
 
@@ -101,34 +44,33 @@ void ImageAllignment::detectFeaturePoints(int ind, vector<Image> &images,  Mat r
 //
 // Extract a descriptor for each feature point.
 //
-//  TODO:
-//       Make interface for user to chose algorithm at run time
-//
 //----------------------------------------------------------------------------------------------
-bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vector<Image> &images,  Mat roi, float accuracy, int nM, float sig, int roiInd) {
+void ImageAllignment::extractDescriptors(int ind, string dp, vector<Image> &images,  Mat roi, float accuracy, int nM, float sig, int roiInd) {
     
     Ptr<DescriptorExtractor> de = DescriptorExtractor::create("SIFT");
-    
-//    printParams(de);
-    
-//    de->set("contrastThreshold", 100);
-//    de->set("edgeThreshold", 100);
+
+    // Set params for SIFT
     de->set("sigma", sig);
-    
-    // Compute descriptors
-    Mat descriptors1, descriptors2;
     de->compute(roi, roikp, descriptors1);
     de->compute(images[ind].matrix, imgkp, descriptors2);
     
-    // Find matches between descriptors
-    FlannBasedMatcher matcher;
-    vector<vector< DMatch >> matches1;
-    vector<vector< DMatch >> matches2;
+    // Find matches in both directions
     matcher.knnMatch(descriptors1, descriptors2, matches1, 2);
     matcher.knnMatch(descriptors2, descriptors1, matches2, 2);
-    printf("%d matches found ROI -> IMG\n", (int)matches1.size());
-    printf("%d matches found IMG -> ROI\n", (int)matches2.size());
-    
+//    Debug
+//    printf("%d matches found ROI -> IMG\n", (int)matches1.size());
+//    printf("%d matches found IMG -> ROI\n", (int)matches2.size());
+
+}
+
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+// pruneResults
+//
+// Reduce the number of matches.
+//
+//----------------------------------------------------------------------------------------------
+void ImageAllignment::pruneResults(int nM) {
     // Calculation of max and min distances between keypoints
     double max_dist = 0; double min_dist = 100;
     for (int i = 0; i < descriptors1.rows; i++) {
@@ -143,17 +85,16 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
     
     double diff = max_dist - min_dist;
     
-    // Debug
-    //    printf("-- Max dist : %f \n", max_dist );
-    //    printf("-- Min dist : %f \n", min_dist );
-//    vector<vector< DMatch >> symMatch;
-    std::vector< DMatch > good_matches;
+    
+    // Increase the tollerance until unough mathces have been found
     bool enoughMatches = false;
     int numMatch;
+    // There will be 100 increments in the hope of finding matches
     double inc = diff / 100;
     double mult = min_dist + inc;
     while (!enoughMatches) {
         good_matches.clear();
+        // for each match in either direction if present in both lists (symetic testing) check NNDR
         for( int i = 0; i < matches1.size(); i++ ) {
             for( int j = 0; j < matches2.size(); j++ ) {
                 if (matches1[i][0].queryIdx == matches2[j][0].queryIdx) {
@@ -163,84 +104,123 @@ bool ImageAllignment::extractDescriptors(int ind, int x1, int y1, string dp, vec
                 }
             }
         }
+        // if not enough matche increas NNDR
         numMatch = (int)good_matches.size();
         if (numMatch >= nM) {
             enoughMatches = true;
         } else {
+            // Once diff has been spanned, exit
             if (mult >= diff) {
-                enoughMatches = true; 
+                enoughMatches = true;
             }
             mult += inc;
-            good_matches.clear();
         }
     }
-    printf("%d good matches found\n", (int)good_matches.size());
-    
-    // For debug, remove from final animation
-    Mat img_matches;
-    drawMatches( roi, roikp, images[ind].matrix, imgkp, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
-                vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
-    //-- Localize the object from img_1 in img_2
+//    debug
+//    printf("%d good matches found\n", (int)good_matches.size());
+}
+
+
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+// RANSAC
+//
+// RANSAC to get perspecticve
+//
+//----------------------------------------------------------------------------------------------
+bool ImageAllignment::ransac(int ind, vector<Image> &images, int x1, int y1, Mat roi, float accuracy, int roiInd) {
+
+    // keypoint holders
     std::vector<Point2f> obj;
     std::vector<Point2f> scene;
     
     for( size_t i = 0; i < good_matches.size(); i++ ) {
-        //-- Get the keypoints from the good matches
+        // extract keypoints
         obj.push_back( roikp[ good_matches[i].queryIdx ].pt );
         scene.push_back( imgkp[ good_matches[i].trainIdx ].pt );
     }
+    
+    // mask to hold inlier indicators
     vector<uchar> mask;
+    
+    // Calculate translation matrix
     Mat H = findHomography( obj, scene, mask, CV_RANSAC, 3);
     
-    //-- Get the corners from the image_1 ( the object to be "detected" )
-    std::vector<Point2f> obj_corners(4);
+    // 4 points of ROI
+    vector<Point2f> obj_corners(4);
     obj_corners[0] = Point(0,0);
     obj_corners[1] = Point( roi.cols, 0 );
     obj_corners[2] = Point( roi.cols, roi.rows );
     obj_corners[3] = Point( 0, roi.rows );
-    std::vector<Point2f> scene_corners(4);
     
+    // New ROI points
+    vector<Point2f> scene_corners(4);
     perspectiveTransform( obj_corners, scene_corners, H);
     
-    Mat H2 = getPerspectiveTransform(scene_corners, obj_corners);
+    // Offset to middle
     Mat of = Mat::eye(3,3, CV_64F);
     of.at<double>(0,2) = -x1;
     of.at<double>(1,2) = -y1;
     H *= of;
-    of.at<double>(0,2) = x1;
-    of.at<double>(1,2) = y1;
-    of *= H2;
-    H2 = of;
+    
+    // Calculet number of inliers
     int numInliers = 0;
     for (int i = 0; i < mask.size(); i++) {
         if ((int)mask[i] == 1) {
             numInliers++;
         }
     }
-    if ((float)numInliers > (float)mask.size()*accuracy && ((float)numInliers / mask.size()) > images[ind].warpAcc) {
-        if (scene_corners[0].x > 0 && scene_corners[0].y > 0
-            && scene_corners[2].x > 0 && scene_corners[2].y > 0) {
-            if (scene_corners[0].x < images[ind].matrix.cols
-                && scene_corners[0].y < images[ind].matrix.rows
-                && scene_corners[2].x < images[ind].matrix.cols
-                && scene_corners[2].y < images[ind].matrix.rows) {
-            
-                vector<float> roi_co;
-                roi_co.push_back(scene_corners[0].x);
-                roi_co.push_back(scene_corners[0].y);
-                roi_co.push_back(scene_corners[2].x);
-                roi_co.push_back(scene_corners[2].y);
-                images[ind].roi.image = images[ind].getRoi(roi_co);
-                images[ind].roi.x1 = roi_co[0];
-                images[ind].roi.y1 = roi_co[1];
-                images[ind].isWarped = true;
-                images[ind].trans = H;
-                images[ind].warpAcc = ((float)numInliers / mask.size());
-                images[ind].warpInd = roiInd;
+    
+    // Check number of inliers against accuracy
+    // Check that this warp is better than last, if there is a last
+    if ((float)numInliers > (float)mask.size()*accuracy && ((float)numInliers / mask.size()) >= images[ind].warpAcc) {
+        if (scene_corners[0].x > 0 && scene_corners[0].y > 0 && scene_corners[2].x > 0 && scene_corners[2].y > 0) {
+            if (scene_corners[0].x < images[ind].matrix.cols && scene_corners[0].y < images[ind].matrix.rows
+                && scene_corners[2].x < images[ind].matrix.cols && scene_corners[2].y < images[ind].matrix.rows) {
+                
+                // gather info
+                storeInfo(images, scene_corners, H, ind, roiInd, numInliers, mask);
+                
+                // Perform warp
                 warpPerspective(images[ind].orig, images[ind].matrix, H, images[ind].matrix.size(), 1);
             }
         }
     }
     
-    return images[ind].newROI;
+    // Return warp satus.
+    return images[ind].isWarped;
 }
+
+
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+// storeInfo
+//
+// Helper to store info on warp
+//
+//----------------------------------------------------------------------------------------------
+void ImageAllignment::storeInfo(vector<Image> &images, vector<Point2f> scene_corners, Mat H, int ind, int roiInd, int numInliers, vector<uchar> mask) {
+    // Coords of ROI
+    vector<float> roi_co;
+    roi_co.push_back(scene_corners[0].x);
+    roi_co.push_back(scene_corners[0].y);
+    roi_co.push_back(scene_corners[2].x);
+    roi_co.push_back(scene_corners[2].y);
+    // Update ROI for image & store location of TL
+    images[ind].roi.image = images[ind].getRoi(roi_co);
+    images[ind].roi.x1 = roi_co[0];
+    images[ind].roi.y1 = roi_co[1];
+    // Remember that image warped
+    images[ind].isWarped = true;
+    // Store Matrix for video
+    images[ind].trans = H;
+    // Store Accuracy & index from which the image was matched
+    images[ind].warpAcc = ((float)numInliers / mask.size());
+    images[ind].warpInd = roiInd;
+}
+
+
+
+
+
+

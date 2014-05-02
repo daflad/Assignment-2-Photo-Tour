@@ -25,6 +25,8 @@ public:
     
     int run();
     
+    void            readMe();
+    
 private:
     
     void            keyCheck(int wk);
