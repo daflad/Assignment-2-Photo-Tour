@@ -12,7 +12,6 @@
 int main(int argc, const char * argv[]) {
     
     App app;
-    app.readMe();
     app.init(argc, argv);
     return app.run();
 }

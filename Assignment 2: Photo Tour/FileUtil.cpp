@@ -18,7 +18,11 @@
 //----------------------------------------------------------------------------------------------
 bool FileUtil::checkArgs(int argc, const char * argv[], ROI *roi) {
     
-    string arg = argv[1];
+    string arg = "fail";
+    if (argc > 2) {
+        arg = argv[1];
+    }
+
     if (arg != "-fd" && arg != "-rfd") {
         // Let the user know what they might have done wrong
         cerr << "USAGE :: " << "Photo Tour -fd \"fileName.jpg\" ./" << endl;

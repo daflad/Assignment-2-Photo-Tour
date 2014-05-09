@@ -7,10 +7,15 @@
 //
 
 #include "App.h"
-
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
+// Init class vars
+//
+//----------------------------------------------------------------------------------------------
 void App::init(int argc, const char **argv) {
     alligned = false;
-    exit = false;
+    exit = true;
     writeIMG = false;
     writeVID = false;
     roi.init();
@@ -18,26 +23,37 @@ void App::init(int argc, const char **argv) {
     if (fu.checkArgs(argc, argv, &roi)) {
         dataSet = fu.loadImages();
         tp.init(dataSet, fu.dirpath);
+        readMe();
+        exit = false;
     }
 }
 
-
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
+// Main function running whilst program active
+//
+//----------------------------------------------------------------------------------------------
 int App::run() {
     
+    // Wait for exit call
     while (!exit) {
         
+        // Start by arranging thumbs
         tp.arrangeThumbnails(dataSet);
         tp.displayThumbnails();
         
+        // Only do allignment if not done yet
         if (!alligned) {
             allign();
         }
         
+        // Check the keys
         int wk = waitKey();
         keyCheck(wk);
         
+        // Isolate selected images
         vector<int> chosen;
-        
         for (int i = 0; i < dataSet.size(); i++) {
             bool hit = false;
             for (int j = 0; j < tp.scratched.size(); j++) {
@@ -45,31 +61,21 @@ int App::run() {
                     hit = true;
                 }
             }
+            // Add all non hit & non warped images
             if (!hit && dataSet[i].isWarped) {
                 chosen.push_back(i);
             }
         }
         
-        int c = 0;
-        vector<int> newChosen;
-        while (c < chosen.size()) {
-            for (int i = 0; i < chosen.size(); i++) {
-                if (dataSet[chosen[i]].warpInd == c) {
-                    newChosen.push_back(dataSet[chosen[i]].index);
-                }
-            }
-            c++;
-        }
-        
         if (writeVID) {
             cout << "writing video" << endl;
-            writeVideo(newChosen);
+            vc.writeSequence(dataSet, chosen);
             writeVID = false;
         }
         
         if (writeIMG) {
             cout << "writing images" << endl;
-            writeImages(chosen);
+            vc.writeImages(dataSet, chosen, fu.dirpath);
             writeIMG = false;
         }
         
@@ -78,10 +84,16 @@ int App::run() {
     return 0;
 }
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
+// keyCheck
+//
+// Set bools to control actions based on key strokes
+//
+//----------------------------------------------------------------------------------------------
 void App::keyCheck(int wk) {
-    
-//    cout << "Key " << wk << endl;
-    
+
     if (wk == 27) {
         exit = true;
     } else if (wk == 105) {
@@ -93,30 +105,37 @@ void App::keyCheck(int wk) {
     }
 }
 
-void App::writeVideo(vector<int> chosen) {
-    vc.writeSequence(dataSet, chosen);
-}
-
-void App::writeImages(vector<int> chosen) {
-    vc.writeImages(dataSet, chosen, fu.dirpath);
-}
-
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
+// lookForNew
+//
+// look for new roi's found in search
+//
+//----------------------------------------------------------------------------------------------
 bool App::lookForNew(int ind, bool once) {
     bool lessThan = false;
 //    cout << "looking " << ind << endl;
+    // For each image
     for (int j = 1; j < dataSet.size(); j++) {
+        // find non warped & non failed images
         if (!dataSet[j].isWarped && !dataSet[j].failed && j != ind) {
+            // Try to alllign but catch exceptions
             try {
                 ia.detectFeaturePoints(j, dataSet, dataSet[ind].roi.image, 0.0025, 0.05);
                 ia.extractDescriptors(j, fu.dirpath, dataSet, dataSet[ind].roi.image, 0.7, 16, 0.01, ind);
                 ia.pruneResults(16);
                 if (ia.ransac(j, dataSet, dataSet[ind].roi.x1, dataSet[ind].roi.y1, dataSet[ind].roi.image, 0.7, ind)) {
+                    // if j < less than ind then we have passed the point where
+                    // j wil get checked again so check it when you get back!
                     if (j < ind) {
                         lessThan = true;
                     }
                     tp.arrangeThumbnails(dataSet);
                     tp.displayThumbnails();
+                    // short delay to see results as they grow
                     waitKey(30);
+                    // dont want to get stuck in a loop!!
                     if (j > ind && once) {
                         lookForNew(j, true);
                     } else {
@@ -133,7 +152,14 @@ bool App::lookForNew(int ind, bool once) {
     return lessThan;
 }
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
+// Helper to assist recursion.
+//
+//----------------------------------------------------------------------------------------------
 void App::looking() {
+    // For each image find ones with rois too look again
     for (int i = 1; i < dataSet.size(); i++) {
         if (dataSet[i].isWarped && !dataSet[i].failed) {
             if (lookForNew(i, true)) {
@@ -142,38 +168,46 @@ void App::looking() {
         }
     }
 }
-
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
+// Allign
+//
+// Perform allignment
+//
+//----------------------------------------------------------------------------------------------
 void App::allign() {
 
-    
+    // Allign images to first ROI
     for (int i = 0; i < dataSet.size(); i++) {
-        ia.detectFeaturePoints(i, dataSet, roi.image, 0.0025, 0.05);
+        ia.detectFeaturePoints(i, dataSet, roi.image, 0.025, 0.05);
         ia.extractDescriptors(i, fu.dirpath, dataSet, roi.image, 0.7, 9, 0.01, 0);
         ia.pruneResults(9);
         if (ia.ransac(i, dataSet, roi.x1, roi.y1, roi.image, 0.7, 0)) {
             tp.arrangeThumbnails(dataSet);
             tp.displayThumbnails();
+            // Show results
             waitKey(30);
         }
     }
-    
+    // Allign images to all other ROIs
     looking();
-    
-//    for (int i = 1; i < dataSet.size(); i++) {
-//        ia.detectFeaturePoints(dataSet[i].warpInd, dataSet, roi.image, 0.0025, 0.1);
-//        if (ia.extractDescriptors(dataSet[i].warpInd, dataSet[dataSet[i].warpInd].roi.x1, dataSet[dataSet[i].warpInd].roi.y1, fu.dirpath, dataSet, roi.image, 0.67, 30, 0.01, dataSet[i].warpInd)) {
-//            tp.arrangeThumbnails(dataSet);
-//            tp.displayThumbnails();
-//            waitKey(30);
-//        }
-//    }
+
+    // once alligned show all images
     tp.showUnwarped = true;
     tp.arrangeThumbnails(dataSet);
     tp.displayThumbnails();
+    // Just incase the user is looking here!
     cout << "All Alligned!" << endl;
     alligned = true;
 }
 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//
+// Display README to user
+//
+//----------------------------------------------------------------------------------------------
 void App::readMe() {
     String msg;
     msg += "Insructions\n";
